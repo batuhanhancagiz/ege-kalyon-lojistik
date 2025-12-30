@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Ege Kalyon | Operasyon Merkezi</title>
+    <style>
+        /* --- YAZILIM TADINDA PREMIUM EKLEMELER --- */
+        :root {
+            --neon-blue: #00d2ff;
+            --deep-sapphire: #00458b;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        .admin-main { padding: 30px 50px !important; }
+
+        /* Başlık Alanı */
+        .page-header-premium {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Geri Dön Butonu - Ultra Modern */
+        .btn-premium-back {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .btn-premium-back i {
+            background: var(--primary);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .btn-premium-back:hover {
+            border-color: var(--primary);
+            transform: translateX(-5px);
+            box-shadow: 0 0 20px rgba(0, 113, 227, 0.2);
+        }
+        .btn-premium-back:hover i { transform: scale(1.1); }
+
+        /* Operasyon Grid Yapısı */
+        .operation-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 25px; 
+            margin-bottom: 40px; 
+            animation: fadeIn 0.8s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .op-card { 
+            background: var(--glass-bg); 
+            border: 1px solid rgba(255,255,255,0.05); 
+            padding: 30px; 
+            border-radius: 24px; 
+            backdrop-filter: blur(15px);
+            box-shadow: var(--card-shadow);
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .op-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); opacity: 0.5;
+        }
+        .op-card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(255,255,255,0.05); }
+        
+        .op-card h3 { 
+            color: #fff; 
+            font-size: 1rem; 
+            text-transform: uppercase; 
+            margin-bottom: 25px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            font-weight: 800;
+        }
+        .op-card h3 i { color: var(--primary); font-size: 1.2rem; }
+        
+        /* Inputlar */
+        .input-group-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .input-item { display: flex; flex-direction: column; gap: 8px; }
+        .input-item label { font-size: 0.7rem; color: #888; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding-left: 5px;}
+        .input-item input, .input-item select { 
+            background: rgba(0,0,0,0.4); 
+            border: 1px solid #222; 
+            color: #fff; 
+            padding: 14px; 
+            border-radius: 14px; 
+            font-size: 0.9rem; 
+            transition: all 0.3s;
+        }
+        .input-item input:focus { 
+            border-color: var(--primary); 
+            background: #000;
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+            outline: none;
+        }
+
+        /* Kaydet Butonu */
+        .form-footer { grid-column: span 2; display: flex; justify-content: center; padding-top: 20px; }
+        .btn-op-save { 
+            background: linear-gradient(90deg, var(--primary), #00d2ff); 
+            color: #fff; border: none; padding: 18px 60px; 
+            border-radius: 18px; font-weight: 800; cursor: pointer; 
+            display: flex; align-items: center; gap: 15px; font-size: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 113, 227, 0.4); transition: 0.4s;
+        }
+        .btn-op-save:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 15px 40px rgba(0, 113, 227, 0.6); }
+
+        /* Durum Pilleri */
+        .status-pill { padding: 6px 16px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid transparent; }
+        .status-pill.green { background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body class="admin-body">
+    <aside class="sidebar">
+        <div class="sidebar-logo">EGE KALYON <span>V1</span></div>
+        <nav class="sidebar-nav">
+            <a href="/admin"><i class="fas fa-bolt"></i> Panel</a>
+            <a href="/cizelge" class="active"><i class="fas fa-table"></i> Çizelge</a>
+            <a href="/cikis"><i class="fas fa-power-off"></i> Çıkış</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <div class="page-header-premium">
+            <div class="welcome-text">
+                <h1 style="font-size: 2.2rem;">Operasyon <span class="highlight">Merkezi</span></h1>
+                <p style="color: #666; font-weight: 500;">Yeni bir iş emri oluşturun ve lojistik sürecini başlatın.</p>
+            </div>
+            <a href="/admin" class="btn-premium-back">
+                <i class="fas fa-chevron-left"></i>
+                DASHBOARD'A DÖN
+            </a>
+        </div>
+
+        <form action="/is-ekle" method="POST">
+            <div class="operation-grid">
+                
+                <div class="op-card">
+                    <h3><i class="fas fa-file-signature"></i> Sevkiyat Temel Verileri</h3>
+                    <div class="input-group-grid">
+                        <div class="input-item"><label>Operasyon Tarihi</label><input type="date" name="tarih" required></div>
+                        <div class="input-item"><label>Sıra No</label><input type="text" name="sira" placeholder="Örn: 01"></div>
+                        <div class="input-item"><label>Rejim Tipi</label><select name="ihr_ith"><option>İhracat</option><option>İthalat</option></select></div>
+                        <div class="input-item"><label>Planlanan Saat</label><input type="time" name="saat"></div>
+                        <div class="input-item"><label>Müşteri Adı</label><input type="text" name="musteri" placeholder="Müşteri Seçin veya Yazın"></div>
+                        <div class="input-item"><label>Yükleyici Firma</label><input type="text" name="firma" placeholder="Firma Ünvanı"></div>
+                        <div class="input-item"><label>Acente Bilgisi</label><input type="text" name="acenta"></div>
+                        <div class="input-item"><label>Booking Numarası</label><input type="text" name="booking_acente"></div>
+                        <div class="input-item"><label>Konteyner Ebat</label><input type="text" name="ebat" placeholder="40'HC / 20'DC"></div>
+                        <div class="input-item"><label>Transit Durumu</label><select name="transit"><option>Hayır</option><option>Evet</option></select></div>
+                    </div>
+                </div>
+
+                <div class="op-card" style="border-left-color: #00d2ff;">
+                    <h3><i class="fas fa-truck-moving"></i> Saha & Araç Ataması</h3>
+                    <div class="input-group-grid">
+                        <div class="input-item"><label>Görevli Şoför</label>
+                            <select name="sofor_ad_soyad" required>
+                                <option value="">Şoför Seçimi Yapın</option>
+                                <% soforler.forEach(s => { %><option value="<%= s.ad_soyad %>"><%= s.ad_soyad %></option><% }) %>
+                            </select>
+                        </div>
+                        <div class="input-item"><label>Araç Plakası</label>
+                            <select name="plaka" required>
+                                <option value="">Plaka Seçimi Yapın</option>
+                                <% araclar.forEach(a => { %><option value="<%= a.plaka %>"><%= a.plaka %></option><% }) %>
+                            </select>
+                        </div>
+                        <div class="input-item"><label>Konteyner Numarası</label><input type="text" name="konteyner_no" placeholder="ABCD1234567"></div>
+                        <div class="input-item"><label>Mühür Numarası</label><input type="text" name="muhur_no"></div>
+                        <div class="input-item"><label>Alım Noktası</label><input type="text" name="alim_yeri"></div>
+                        <div class="input-item"><label>Teslim Noktası</label><input type="text" name="teslim_yeri"></div>
+                        <div class="input-item"><label>Yükleme/Boşaltma Adresi</label><input type="text" name="yukleme_bosaltma_yeri"></div>
+                        <div class="input-item"><label>Takip Durumu</label>
+                            <select name="durum" class="status-select">
+                                <option value="1">Aktif Sevkiyat</option>
+                                <option value="0">Tamamlanmış İş</option>
+                            </select>
+                        </div>
+                        <div class="input-item"><label>Konteyner Götür</label><input type="text" name="kont_gotur"></div>
+                        <div class="input-item"><label>Konteyner Getir</label><input type="text" name="kont_getir"></div>
+                    </div>
+                </div>
+
+                <div class="op-card">
+                    <h3><i class="fas fa-chart-pie"></i> Maliyet & Finans Yönetimi</h3>
+                    <div class="input-group-grid">
+                        <div class="input-item"><label>Anlaşılan Fiyat</label><input type="number" name="fiyat" placeholder="₺"></div>
+                        <div class="input-item"><label>Kantar Ücreti</label><input type="number" name="kantar" placeholder="₺"></div>
+                        <div class="input-item"><label>Bekleme Bedeli</label><input type="number" name="bekleme"></div>
+                        <div class="input-item"><label>Transit Bedeli</label><input type="number" name="transit_ucreti"></div>
+                        <div class="input-item"><label>Kurye / Evrak</label><input type="number" name="kurye_ucreti"></div>
+                        <div class="input-item"><label>Mesai Ücreti</label><input type="number" name="mesai_ucreti"></div>
+                        <div class="input-item"><label>Depo / Ardiye Farkı</label><input type="number" name="depo_farki"></div>
+                        <div class="input-item"><label>Harcırah</label><input type="number" name="harcirah"></div>
+                        <div class="input-item"><label>İndi-Bindi Bedeli</label><input type="number" name="indi_bindi_tutari"></div>
+                        <div class="input-item"><label>Tedarikçi Fatura No</label><input type="text" name="ted_fatura"></div>
+                    </div>
+                </div>
+
+                <div class="op-card">
+                    <h3><i class="fas fa-briefcase"></i> Ek Bilgiler & İletişim</h3>
+                    <div class="input-group-grid">
+                        <div class="input-item" style="grid-column: span 2;"><label>Operasyonel Açıklama</label><input type="text" name="aciklama" placeholder="Süreçle ilgili kritik notları buraya girin..."></div>
+                        <div class="input-item"><label>Mail Bilgisi</label><input type="text" name="mail" placeholder="İlgili e-posta"></div>
+                        <div class="input-item"><label>Saha Kontrol</label><input type="text" name="kontrol"></div>
+                        <div class="input-item"><label>Ek Masraf Kalemi</label><input type="text" name="ek_masraf"></div>
+                        <div class="input-item"><label>Masraf Tutarı</label><input type="number" name="ek_masraf_bedeli" placeholder="₺"></div>
+                        <div class="input-item"><label>Gümrük Navlun</label><input type="number" name="gmrk_navlun"></div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn-op-save">
+                        <i class="fas fa-paper-plane"></i> OPERASYONEL SÜRECİ BAŞLAT
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="glass-table-container">
+            <h3 style="margin-bottom: 20px; font-weight: 800; font-size: 0.9rem; color: var(--primary);">SON YAPILAN KAYITLAR</h3>
+            <div class="table-scroll-wrapper">
+                <table class="cyber-table">
+                    <thead>
+                        <tr>
+                            <th>İŞLEM</th><th>TARİH</th><th>ŞOFÖR</th><th>PLAKA</th><th>MÜŞTERİ</th><th>KONT. NO</th><th>FİYAT</th><th>DURUM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% isler.slice(0, 10).forEach(is => { %>
+                        <tr>
+                            <td>
+                                <% if(is.durum === 1) { %>
+                                    <form action="/is-bitir/<%= is.id %>" method="POST">
+                                        <button type="submit" class="btn-status-toggle">BİTTİ</button>
+                                    </form>
+                                <% } else { %>
+                                    <span style="color: #444;"><i class="fas fa-check-double"></i> KAPALI</span>
+                                <% } %>
+                            </td>
+                            <td><%= is.tarih %></td>
+                            <td><%= is.sofor_ad_soyad %></td>
+                            <td><span class="plate-ui"><%= is.plaka %></span></td>
+                            <td><%= is.musteri %></td>
+                            <td><%= is.konteyner_no %></td>
+                            <td style="color: var(--primary); font-weight: bold;"><%= is.fiyat %> ₺</td>
+                            <td>
+                                <span class="status-pill <%= is.durum === 1 ? 'green' : '' %>">
+                                    <%= is.durum === 1 ? 'YOLDA' : 'BİTTİ' %>
+                                </span>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ege Kalyon V1 | Sisteme Giriş</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-body">
+
+    <div class="auth-blob accent-blue"></div>
+
+    <div class="auth-wrapper animate__animated animate__zoomIn">
+        <div class="auth-card">
+            
+            <div class="auth-header">
+                <img src="https://www.egekalyon.com.tr/images/egekalyon/logo_transparent_egekalyon.png" 
+                     alt="Ege Kalyon Logo" class="auth-logo animate__animated animate__pulse animate__infinite">
+                <h2>Panel Girişi</h2>
+                <p>Ege Kalyon Lojistik Yönetim Sistemi</p>
+            </div>
+
+            <form action="/giris" method="POST" class="auth-form">
+                <div class="input-field">
+                    <i class="fas fa-user-shield"></i>
+                    <input type="email" name="email" placeholder="E-posta Adresiniz" required>
+                </div>
+
+                <div class="input-field">
+                    <i class="fas fa-key"></i>
+                    <input type="password" name="sifre" placeholder="Şifreniz" required>
+                </div>
+
+                <div class="auth-options">
+                    <label class="remember-me">
+                        <input type="checkbox"> Beni Hatırla
+                    </label>
+                    <a href="#" class="forgot-pass">Şifremi Unuttum</a>
+                </div>
+
+                <button type="submit" class="btn-auth-premium">
+                    <span>GİRİŞ YAP</span>
+                    <i class="fas fa-sign-in-alt"></i>
+                </button>
+            </form>
+
+           <div class="auth-footer">
+    Sistem erişim yetkiniz yok mu? <br>
+    <a href="https://www.egekalyon.com.tr/" style="color: var(--primary);">Yönetici ile İletişime Geçin</a>
+</div>
+
+        <div class="auth-side-info">
+            <div class="glass-info-box">
+                <i class="fas fa-chart-line"></i>
+                <h4>Verimlilik Analizi</h4>
+                <p>Giriş yaptıktan sonra bugünkü seferlerinizi ve bekleme haklarınızı anlık görebilirsiniz.</p>
+            </div>
+            <div class="glass-info-box">
+                <i class="fas fa-headset"></i>
+                <h4>Teknik Destek</h4>
+                <p>Sistemle ilgili her türlü sorunuzda 7/24 operasyon merkezimize ulaşabilirsiniz.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Ege Kalyon | Dashboard</title>
+    <style>
+        /* Akıllı Inputlar ve Sayaç */
+        .smart-date-group { display: flex; gap: 5px; margin-top: 10px; justify-content: center; }
+        .smart-date-group input { background: #000 !important; border: 1px solid #333 !important; color: #fff !important; text-align: center; font-weight: bold; border-radius: 8px !important; }
+        .label-mini { color: #f59e0b; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-top: 15px; display: block; }
+        #bekleme-count-badge { background: #f59e0b; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; font-weight: 800; margin-left: 5px; display: none; }
+        
+        /* Bekleme Tablosu Özel Stili */
+        .bekleme-list-area { margin-top: 20px; border-top: 1px solid #222; padding-top: 15px; max-height: 200px; overflow-y: auto; }
+        .bekleme-mini-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: #ddd; }
+        .bekleme-mini-table th { text-align: left; color: #f59e0b; padding: 8px; border-bottom: 1px solid #333; }
+        .bekleme-mini-table td { padding: 8px; border-bottom: 1px solid #111; }
+        .btn-row-del { background: none; border: none; color: #ff4d4d; cursor: pointer; transition: 0.3s; }
+        .btn-row-del:hover { transform: scale(1.2); }
+
+        /* --- LUCA ÖZEL GÖMÜLÜ PANEL (OVERLAY) --- */
+        .luca-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            backdrop-filter: blur(15px);
+            animation: fadeIn 0.4s ease;
+        }
+        .luca-toolbar {
+            background: #111; padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222;
+        }
+        .luca-toolbar h2 { font-size: 1rem; color: #29dec8; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .btn-close-luca { background: #ff4d4d; color: white; border: none; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .luca-frame-wrapper { flex: 1; width: 100%; height: 100%; background: #fff; }
+        iframe#luca-iframe { width: 100%; height: 100%; border: none; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="admin-body">
+    <aside class="sidebar">
+        <div class="sidebar-title">EGE KALYON <span>V1</span></div>
+        <nav class="sidebar-nav">
+            <a href="/admin" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="/cizelge"><i class="fas fa-table"></i> Operasyon</a>
+            <a href="/cikis"><i class="fas fa-power-off"></i> Çıkış</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h1>Hoş Geldin, <span class="highlight"><%= firma %></span></h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Sistem aktif, tüm operasyon tek merkezde.</p>
+            </div>
+            <div class="active-count-box" onclick="location.href='/cizelge'">
+                <span class="count-num"><%= isler.length %></span>
+                <span class="count-label">Aktif İş Emri</span>
+            </div>
+        </header>
+
+        <section class="grid-cockpit-v2">
+            <div class="cyber-card" onclick="openModal('monitor-modal')" style="cursor: pointer; border-color: var(--accent);">
+                <i class="fas fa-desktop" style="color: var(--accent) !important;"></i>
+                <div class="card-info"><h3>Canlı Monitör</h3><p>Gözlemci modunda izle.</p></div>
+            </div>
+
+            <div class="cyber-card" onclick="location.href='/cizelge'" style="cursor: pointer;">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <div class="card-info"><h3>Dijital Çizelge</h3><p>Operasyon yönetimi.</p></div>
+            </div>
+
+            <div class="cyber-card" onclick="openModal('bekleme-modal')" style="cursor: pointer; border-color: #f59e0b;">
+                <i class="fas fa-clock" style="color: #f59e0b !important;"></i>
+                <div class="card-info"><h3>Bekleme Takibi <span id="bekleme-count-badge">0</span></h3><p>Otomatik hesaplama.</p></div>
+            </div>
+
+            <a href="https://web.arvento.com/" target="_blank" class="cyber-card arvento-box">
+                <i class="fas fa-satellite-dish"></i>
+                <div class="card-info"><h3>Araç Takip</h3><p>Arvento (Yeni Sekme)</p></div>
+            </a>
+
+            <div class="cyber-card luca-box" onclick="openLucaEmbedded()" style="cursor: pointer;">
+                <i class="fas fa-calculator"></i>
+                <div class="card-info"><h3>Luca Muhasebe</h3><p>Gömülü modül.</p></div>
+            </div>
+
+            <div class="cyber-card" onclick="openModal('vehicle-modal')" style="cursor: pointer;"><i class="fas fa-truck-moving"></i><div class="card-info"><h3>Araç Kaydı</h3><p>Plaka yönetimi.</p></div></div>
+            <div class="cyber-card" onclick="openModal('driver-modal')" style="cursor: pointer;"><i class="fas fa-user-tie"></i><div class="card-info"><h3>Şoför Kaydı</h3><p>Personel yönetimi.</p></div></div>
+        </section>
+    </main>
+
+    <div id="bekleme-modal" class="modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <span class="close" onclick="closeModal('bekleme-modal')">&times;</span>
+            <h2 style="color: #f59e0b; margin-bottom: 25px;"><i class="fas fa-stopwatch"></i> Bekleme Hesaplayıcı</h2>
+            <div class="modal-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <input type="text" id="b-yuklemebosaltmayeri" placeholder="Yükleme / Boşaltma Yeri" style="grid-column: span 2;">
+                    <input type="text" id="b-plaka" placeholder="Plaka">
+                    <input type="text" id="b-konteyner" placeholder="Konteyner No">
+                </div>
+
+                <span class="label-mini">GİRİŞ ZAMANI</span>
+                <div class="smart-date-group">
+                    <input type="text" id="g-gun" placeholder="GG" maxlength="2" oninput="autoNext(this, 'g-ay')" style="width: 50px;">
+                    <input type="text" id="g-ay" placeholder="AA" maxlength="2" oninput="autoNext(this, 'g-yil')" style="width: 50px;">
+                    <input type="text" id="g-yil" placeholder="YYYY" maxlength="4" oninput="autoNext(this, 'g-saat')" style="width: 80px;">
+                    <input type="text" id="g-saat" placeholder="00" maxlength="2" oninput="autoNext(this, 'g-dk')" style="width: 50px;">
+                    <input type="text" id="g-dk" placeholder="00" maxlength="2" oninput="autoNext(this, 'c-gun')" style="width: 50px;">
+                </div>
+
+                <span class="label-mini">ÇIKIŞ ZAMANI</span>
+                <div class="smart-date-group">
+                    <input type="text" id="c-gun" placeholder="GG" maxlength="2" oninput="autoNext(this, 'c-ay')" style="width: 50px;">
+                    <input type="text" id="c-ay" placeholder="AA" maxlength="2" oninput="autoNext(this, 'c-yil')" style="width: 50px;">
+                    <input type="text" id="c-yil" placeholder="YYYY" maxlength="4" oninput="autoNext(this, 'c-saat')" style="width: 80px;">
+                    <input type="text" id="c-saat" placeholder="00" maxlength="2" oninput="autoNext(this, 'c-dk')" style="width: 50px;">
+                    <input type="text" id="c-dk" placeholder="00" maxlength="2" oninput="hesaplaBekleme()" style="width: 50px;">
+                </div>
+
+                <div id="bekleme-sonuc" style="margin-top: 20px; padding: 15px; background: rgba(245, 158, 11, 0.1); border: 1px dashed #f59e0b; border-radius: 15px; text-align: center; display: none;">
+                    <div id="toplam-saat" style="font-size: 0.9rem; color: #888;">Süre</div>
+                    <div id="bekleme-adet" style="font-size: 2rem; color: #fff; font-weight: 900;">0 BEKLEME</div>
+                    <div id="bekleme-durum-text" style="color: #ff4d4d; font-weight: 800; font-size: 1.1rem; margin: 5px 0;"></div>
+                    <button type="button" class="btn-auth-premium" style="background: #10b981; margin-top: 10px; width: 150px; padding: 10px;" onclick="addBeklemeRow()">EKLE</button>
+                </div>
+            </div>
+
+            <div class="bekleme-list-area">
+                <table class="bekleme-mini-table">
+                    <thead><tr><th>YER</th><th>PLAKA</th><th>KONTEYNER</th><th>ADET</th><th>SİL</th></tr></thead>
+                    <tbody id="bekleme-list-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="luca-overlay" class="luca-overlay">
+        <div class="luca-toolbar">
+            <h2><i class="fas fa-calculator"></i> Luca Muhasebe Sistemi</h2>
+            <button class="btn-close-luca" onclick="closeLucaEmbedded()">Sistemi Kapat ✕</button>
+        </div>
+        <div class="luca-frame-wrapper"><iframe id="luca-iframe" src=""></iframe></div>
+    </div>
+
+    <div id="monitor-modal" class="modal"><div class="modal-content" style="width: 90%; max-width: 1200px;"><span class="close" onclick="closeModal('monitor-modal')">&times;</span><h2 style="color: var(--accent); margin-bottom: 20px;"><i class="fas fa-eye"></i> Operasyon Önizleme</h2><div class="glass-table-container" style="pointer-events: none; opacity: 0.9;"><div class="table-scroll-wrapper"><table class="cyber-table"><thead><tr><th>ŞOFÖR</th><th>PLAKA</th><th>MÜŞTERİ</th><th>FİRMA</th><th>ALIM YERİ</th><th>YÜKLEME/BOŞALTMA</th><th>TESLİM YERİ</th></tr></thead><tbody><% isler.forEach(is => { %><tr><td><%= is.sofor_ad_soyad %></td><td><span class="plate-ui"><%= is.plaka %></span></td><td><%= is.musteri %></td><td><%= is.firma %></td><td><%= is.alim_yeri %></td><td><%= is.yukleme_bosaltma_yeri %></td><td><%= is.teslim_yeri %></td></tr><% }) %></tbody></table></div></div></div></div>
+    <div id="vehicle-modal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('vehicle-modal')">&times;</span><h2>Araç Kaydı</h2><form action="/arac-ekle" method="POST" class="modal-form"><input type="text" name="plaka" placeholder="Plaka" required><input type="text" name="ruhsat_no" placeholder="Ruhsat Seri No"><input type="text" name="marka_model" placeholder="Araç Marka/Model"><button type="submit" class="btn-auth-premium">Kaydet</button></form><div class="management-list"><% araclar.forEach(a => { %><div class="list-item"><span><%= a.plaka %></span><form action="/arac-sil/<%= a.id %>" method="POST"><button class="btn-delete-small"><i class="fas fa-trash"></i></button></form></div><% }) %></div></div></div>
+    <div id="driver-modal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('driver-modal')">&times;</span><h2>Şoför Kaydı</h2><form action="/sofor-ekle" method="POST" class="modal-form"><input type="text" name="ad_soyad" placeholder="Ad Soyad" required><input type="text" name="gsm" placeholder="GSM No"><input type="text" name="tc_no" placeholder="TC Kimlik No"><button type="submit" class="btn-auth-premium">Kaydet</button></form><div class="management-list"><% soforler.forEach(s => { %><div class="list-item"><span><%= s.ad_soyad %></span><form action="/sofor-sil/<%= s.id %>" method="POST"><button class="btn-delete-small"><i class="fas fa-trash"></i></button></form></div><% }) %></div></div></div>
+
+    <script>
+        function openModal(id) { document.getElementById(id).style.display = 'block'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        window.onclick = function(e) { if(e.target.className === 'modal') e.target.style.display='none'; }
+
+        function openLucaEmbedded() {
+            const overlay = document.getElementById('luca-overlay');
+            const iframe = document.getElementById('luca-iframe');
+            iframe.src = "https://www.luca.com.tr/";
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLucaEmbedded() {
+            const overlay = document.getElementById('luca-overlay');
+            const iframe = document.getElementById('luca-iframe');
+            iframe.src = "";
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        /* --- BEKLEME HESAPLAMA SİSTEMİ --- */
+        function autoNext(el, nextId) {
+            if (el.value.length === el.maxLength) { document.getElementById(nextId).focus(); }
+            hesaplaBekleme();
+        }
+
+        let tempBeklemeAdet = 0;
+
+        function updateBeklemeBadge() {
+            const rowCount = document.getElementById('bekleme-list-body').rows.length;
+            const badge = document.getElementById('bekleme-count-badge');
+            badge.style.display = rowCount > 0 ? 'inline-block' : 'none';
+            badge.innerText = rowCount;
+        }
+
+        function hesaplaBekleme() {
+            const v = (id) => document.getElementById(id).value;
+            const gD = v('g-gun'), gM = v('g-ay'), gY = v('g-yil'), gH = v('g-saat'), gI = v('g-dk');
+            const cD = v('c-gun'), cM = v('c-ay'), cY = v('c-yil'), cH = v('c-saat'), cI = v('c-dk');
+
+            if (gD && gM && gY && gH && gI && cD && cM && cY && cH && cI) {
+                const giris = new Date(`${gY}-${gM}-${gD}T${gH}:${gI}:00`);
+                const cikis = new Date(`${cY}-${cM}-${cD}T${cH}:${cI}:00`);
+                const sonucDiv = document.getElementById('bekleme-sonuc');
+                const durumText = document.getElementById('bekleme-durum-text');
+
+                if (cikis > giris) {
+                    const farkMs = cikis - giris;
+                    const farkSaat = Math.floor(farkMs / (1000 * 60 * 60));
+                    tempBeklemeAdet = Math.floor(farkSaat / 6);
+
+                    sonucDiv.style.display = 'block';
+                    document.getElementById('toplam-saat').innerText = farkSaat + " Saat Fark Var";
+                    document.getElementById('bekleme-adet').innerText = tempBeklemeAdet + " BEKLEME";
+                    durumText.innerText = tempBeklemeAdet > 0 ? "BEKLEME MEVCUT" : "SÜRE YETERSİZ";
+                    durumText.style.color = tempBeklemeAdet > 0 ? "#ff4d4d" : "#888";
+                } else {
+                    sonucDiv.style.display = 'none';
+                }
+            }
+        }
+
+        function addBeklemeRow() {
+            const yer = document.getElementById('b-yuklemebosaltmayeri').value;
+            const plaka = document.getElementById('b-plaka').value;
+            const konteyner = document.getElementById('b-konteyner').value;
+            if(!yer || !plaka) return alert("Lütfen Yer ve Plaka bilgilerini doldurun!");
+            const tableBody = document.getElementById('bekleme-list-body');
+            const newRow = `<tr><td>${yer}</td><td>${plaka}</td><td>${konteyner}</td><td style="font-weight:bold;color:#f59e0b;">${tempBeklemeAdet}</td><td><button class="btn-row-del" onclick="this.parentElement.parentElement.remove(); updateBeklemeBadge();"><i class="fas fa-trash-alt"></i></button></td></tr>`;
+            tableBody.insertAdjacentHTML('afterbegin', newRow);
+            updateBeklemeBadge();
+            document.querySelectorAll('#bekleme-modal input').forEach(i => i.value = "");
+            document.getElementById('bekleme-sonuc').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

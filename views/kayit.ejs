@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ege Kalyon V1 | Kurumsal Kayıt</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-body">
+
+    <div class="auth-blob"></div>
+
+    <div class="auth-wrapper animate__animated animate__fadeIn">
+        <div class="auth-card">
+            
+            <div class="auth-header">
+                <img src="https://www.egekalyon.com.tr/images/egekalyon/logo_transparent_egekalyon.png" 
+                     alt="Ege Kalyon Logo" class="auth-logo animate__animated animate__pulse animate__infinite">
+                <h2>Kurumsal Kayıt</h2>
+                <p>Lojistik ekosistemine ilk adımınızı atın.</p>
+            </div>
+
+            <form action="/kayit" method="POST" class="auth-form">
+                <div class="input-field">
+                    <i class="fas fa-building"></i>
+                    <input type="text" name="firma_adi" placeholder="Firma / Şirket Adı" required>
+                </div>
+
+                <div class="input-field">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Kurumsal E-posta" required>
+                </div>
+
+                <div class="input-field">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="sifre" placeholder="Şifre Oluşturun" required>
+                </div>
+
+                <div class="auth-info-text">
+                    <i class="fas fa-shield-check"></i> Verileriniz 256-bit şifreleme ile korunmaktadır.
+                </div>
+
+                <button type="submit" class="btn-auth-premium">
+                    <span>SİSTEMİ BAŞLAT</span>
+                    <i class="fas fa-rocket"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Zaten bir hesabınız var mı? <a href="/giris">Giriş Yapın</a>
+            </div>
+        </div>
+
+        <div class="auth-side-info">
+            <div class="side-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <h4>Anlık Senkronizasyon</h4>
+                    <p>Arvento ve Luca verileri anlık panelinizde.</p>
+                </div>
+            </div>
+            <div class="side-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <h4>Hatasız Bekleme</h4>
+                    <p>6/12/18 saat kuralını sistem yönetir.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
