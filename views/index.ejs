@@ -2,19 +2,13 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ege Kalyon Yazılım | Kurumsal Lojistik Teknolojileri</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
-    
-<style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    <style>
         :root {
             --idx-primary: #0071e3;
             --idx-primary-glow: rgba(0, 113, 227, 0.3);
@@ -25,131 +19,95 @@
             --idx-glass: rgba(255, 255, 255, 0.03);
         }
 
-        html { scroll-behavior: smooth; overflow-x: hidden; }
+        html { scroll-behavior: smooth; }
         body.idx-body {
             background-color: var(--idx-bg);
             color: #ffffff;
             margin: 0; padding: 0;
             font-family: 'Inter', -apple-system, sans-serif;
             overflow-x: hidden;
-            width: 100%;
         }
 
         /* DİNAMİK ARKA PLAN */
         .idx-glow-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
-        .idx-glow-1 { position: absolute; width: 150%; height: 60%; background: var(--idx-primary); filter: blur(150px); opacity: 0.1; top: -10%; right: -25%; }
-        .idx-glow-2 { position: absolute; width: 150%; height: 60%; background: var(--idx-accent); filter: blur(150px); opacity: 0.05; bottom: -10%; left: -25%; }
+        .idx-glow-1 { position: absolute; width: 800px; height: 800px; background: var(--idx-primary); filter: blur(250px); opacity: 0.15; top: -300px; right: -200px; }
+        .idx-glow-2 { position: absolute; width: 600px; height: 600px; background: var(--idx-accent); filter: blur(200px); opacity: 0.08; bottom: -200px; left: -200px; }
 
-        /* NAVBAR - MOBİL UYUMLU */
-        .idx-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 0; transition: 0.4s; }
-        .idx-nav.scrolled { background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); padding: 10px 0; border-bottom: 1px solid var(--idx-border); }
-        .idx-nav-container { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        /* NAVBAR */
+        .idx-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 25px 0; transition: 0.4s; }
+        .idx-nav.scrolled { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); padding: 12px 0; border-bottom: 1px solid var(--idx-border); }
+        .idx-nav-container { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
         
-        .idx-logo { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 1.1rem; color: #fff; text-decoration: none; }
+        .idx-logo { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 1.3rem; color: #fff; text-decoration: none; letter-spacing: -1px; }
         .idx-logo i { color: var(--idx-primary); }
-        
-        .idx-nav-links { display: flex; align-items: center; gap: 8px; }
-        .idx-nav-item { display: none; } /* Masaüstü linkleri mobilde gizle */
-        
-        .idx-btn-start { 
-            background: var(--idx-primary); 
-            color: #fff !important; 
-            text-decoration: none; 
-            padding: 8px 16px; 
-            border-radius: 10px; 
-            font-weight: 800; 
-            font-size: 0.75rem; 
-            box-shadow: 0 5px 15px var(--idx-primary-glow); 
-        }
+        .idx-logo span span { color: var(--idx-primary); font-weight: 300; }
 
-        /* HERO SECTION */
-        .idx-hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 60px; }
-        .idx-hero-inner { width: 100%; max-width: 1100px; }
-        
-        .idx-badge { 
-            display: inline-flex; align-items: center; gap: 8px; 
-            background: rgba(255,255,255,0.03); border: 1px solid var(--idx-border); 
-            padding: 8px 20px; border-radius: 100px; color: var(--idx-accent); 
-            font-size: 0.7rem; font-weight: 800; margin-bottom: 25px; 
-            text-transform: uppercase; letter-spacing: 1px;
+        .idx-nav-links { display: flex; align-items: center; gap: 12px; }
+        .idx-nav-links a.idx-nav-item { 
+            color: #86868b; text-decoration: none; font-size: 0.85rem; font-weight: 700; padding: 8px 18px;
+            border-radius: 12px; background: var(--idx-glass); border: 1px solid var(--idx-border); transition: 0.3s;
         }
+        .idx-nav-links a.idx-nav-item:hover { color: #fff; background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+        .idx-btn-start { background: var(--idx-primary); color: #fff !important; text-decoration: none; padding: 10px 24px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; transition: 0.3s; box-shadow: 0 5px 15px var(--idx-primary-glow); }
 
-        .idx-hero h1 { 
-            font-size: clamp(2.2rem, 8vw, 6rem); 
-            font-weight: 900; line-height: 1.1; 
-            margin: 0 0 25px 0; letter-spacing: -2px; 
-        }
+        /* HERO - SaaS SATIŞ VİZYONU */
+        .idx-hero { min-height: 95vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 180px 20px 80px; }
+        .idx-hero-inner { max-width: 1100px; }
+        .idx-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--idx-border); padding: 12px 30px; border-radius: 100px; color: var(--idx-accent); font-size: 0.8rem; font-weight: 800; margin-bottom: 35px; text-transform: uppercase; letter-spacing: 2px; }
+        .idx-hero h1 { font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 900; line-height: 0.85; margin: 0 0 35px 0; letter-spacing: -4px; }
         .idx-gradient { background: linear-gradient(180deg, #fff 40%, #555 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .idx-hero p { color: #a1a1a6; font-size: clamp(1.2rem, 2.5vw, 1.6rem); margin-bottom: 60px; line-height: 1.4; max-width: 850px; margin-left: auto; margin-right: auto; }
+
+        /* TEKNOLOJİ İNTERAKTİF PANEL */
+        .idx-tech-area { max-width: 1100px; margin: 0 auto 150px; padding: 0 20px; }
+        .idx-tech-grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; }
+        .idx-tech-card { background: #0a0a0a; border: 1px solid var(--idx-border); border-radius: 20px; padding: 22px 30px; cursor: pointer; transition: 0.4s; display: flex; align-items: center; gap: 15px; }
+        .idx-tech-card:hover, .idx-tech-card.active { border-color: var(--idx-primary); background: rgba(0,113,227,0.15); transform: translateY(-5px); }
+        .idx-tech-card i { font-size: 1.5rem; color: var(--idx-primary); }
+        .idx-tech-card span { font-size: 0.85rem; font-weight: 900; color: #fff; }
+
+        .idx-info-panel { background: rgba(255,255,255,0.02); border: 1px solid var(--idx-border); border-radius: 40px; padding: 60px; text-align: left; display: none; animation: slideDown 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; position: relative; overflow: hidden; }
+        .idx-info-panel::before { content: ''; position: absolute; left: 0; top: 0; width: 5px; height: 100%; background: var(--idx-primary); }
+        .idx-info-panel h4 { color: var(--idx-primary); font-size: 1.8rem; margin-bottom: 25px; font-weight: 900; }
+        .idx-info-panel p { color: #a1a1a6; font-size: 1.25rem; line-height: 1.6; margin: 0; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* SATIŞ ODAKLI BENTO GRID */
+        .idx-bento-section { padding: 100px 5%; max-width: 1400px; margin: 0 auto; }
+        .idx-bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: minmax(320px, auto); gap: 30px; }
+        .idx-bento-card { background: var(--idx-card-bg); border: 1px solid var(--idx-border); border-radius: 45px; padding: 55px; display: flex; flex-direction: column; justify-content: flex-end; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; }
+        .idx-bento-card:hover { border-color: var(--idx-primary); transform: translateY(-15px); box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
+
+        .idx-b-main { grid-column: span 8; background: radial-gradient(circle at top right, #1a1a1a, #000); }
+        .idx-b-side { grid-column: span 4; background: linear-gradient(180deg, #0a0a0a, #111); }
+        .idx-b-wide { grid-column: span 12; background: linear-gradient(90deg, #0a0a0a, #1a1a1a); }
         
-        .idx-hero p { 
-            color: #a1a1a6; font-size: clamp(1rem, 4vw, 1.4rem); 
-            margin-bottom: 40px; line-height: 1.5; max-width: 800px; margin-left: auto; margin-right: auto; 
-        }
+        .idx-bento-card h3 { font-size: 2.2rem; font-weight: 900; margin-bottom: 20px; letter-spacing: -1.5px; }
+        .idx-bento-card p { color: #86868b; font-size: 1.2rem; line-height: 1.6; margin: 0; max-width: 600px; }
+        .idx-bg-icon { position: absolute; top: 40px; right: 40px; font-size: 5rem; color: var(--idx-primary); opacity: 0.1; }
 
-        /* TECH GRID */
-        .idx-tech-area { width: 100%; margin-bottom: 80px; }
-        .idx-tech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .idx-tech-card { 
-            background: #0a0a0a; border: 1px solid var(--idx-border); border-radius: 15px; 
-            padding: 15px; cursor: pointer; transition: 0.3s; 
-            display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
-        }
-        .idx-tech-card i { font-size: 1.2rem; color: var(--idx-primary); }
-        .idx-tech-card span { font-size: 0.7rem; font-weight: 900; }
-
-        .idx-info-panel { 
-            background: rgba(255,255,255,0.02); border: 1px solid var(--idx-border); 
-            border-radius: 20px; padding: 30px 20px; text-align: left; 
-            margin-top: 20px; display: none;
-        }
-        .idx-info-panel h4 { font-size: 1.2rem; margin-bottom: 10px; color: var(--idx-primary); }
-        .idx-info-panel p { font-size: 0.95rem; line-height: 1.5; color: #a1a1a6; }
-
-        /* BENTO GRID */
-        .idx-bento-section { padding: 60px 20px; }
-        .idx-bento-grid { display: flex; flex-direction: column; gap: 20px; }
-        .idx-bento-card { 
-            background: var(--idx-card-bg); border: 1px solid var(--idx-border); 
-            border-radius: 30px; padding: 40px 30px; min-height: 250px;
-            display: flex; flex-direction: column; justify-content: flex-end; 
-            position: relative; overflow: hidden;
-        }
-        .idx-bento-card h3 { font-size: 1.6rem; margin-bottom: 15px; letter-spacing: -1px; }
-        .idx-bento-card p { font-size: 1rem; color: #86868b; line-height: 1.5; }
-        .idx-bg-icon { position: absolute; top: 20px; right: 20px; font-size: 3rem; opacity: 0.1; color: var(--idx-primary); }
-
-        /* PRICING */
-        .idx-pricing-section { padding: 80px 20px; }
-        .idx-pricing-grid { display: flex; flex-direction: column; gap: 20px; }
-        .idx-price-card { 
-            background: #0a0a0a; border: 1px solid var(--idx-border); 
-            padding: 40px 30px; border-radius: 30px; 
-        }
-        .idx-price-card.featured { border-color: var(--idx-primary); background: rgba(0,113,227,0.05); }
-        .idx-price-card h4 { font-size: 1rem; color: #555; margin-bottom: 15px; }
-        .idx-price-card .price { font-size: 2.5rem; font-weight: 900; margin-bottom: 25px; }
-        
-        .idx-price-list { list-style: none; padding: 0; margin-bottom: 30px; }
-        .idx-price-list li { margin-bottom: 12px; font-size: 0.9rem; color: #888; display: flex; align-items: center; gap: 10px; }
-        .idx-price-list li i { color: var(--idx-accent); }
+        /* FİYATLANDIRMA / SATIŞ PAKETLERİ */
+        .idx-pricing-section { padding: 150px 5%; position: relative; }
+        .idx-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .idx-price-card { background: #0a0a0a; border: 1px solid var(--idx-border); padding: 50px 40px; border-radius: 45px; transition: 0.4s; display: flex; flex-direction: column; }
+        .idx-price-card:hover { transform: scale(1.03); border-color: var(--idx-primary); }
+        .idx-price-card.featured { border-color: var(--idx-primary); background: rgba(0,113,227,0.03); box-shadow: 0 30px 60px rgba(0,113,227,0.1); }
+        .idx-price-card h4 { font-size: 1.2rem; color: #555; margin-bottom: 20px; }
+        .idx-price-card .price { font-size: 3rem; font-weight: 900; margin-bottom: 35px; }
+        .idx-price-card .price span { font-size: 1rem; color: #444; }
+        .idx-price-list { list-style: none; padding: 0; margin-bottom: 40px; flex: 1; }
+        .idx-price-list li { margin-bottom: 18px; color: #888; font-size: 0.95rem; display: flex; align-items: center; gap: 12px; }
+        .idx-price-list li i { color: var(--idx-accent); font-size: 1.1rem; }
 
         /* FOOTER */
-        .idx-footer { padding: 80px 20px 40px; text-align: center; border-top: 1px solid #111; }
-        .idx-footer p { font-size: 1.2rem; margin-bottom: 10px; font-weight: 900; }
-        .idx-footer small { font-size: 0.6rem; color: #444; letter-spacing: 2px; }
+        .idx-footer { padding: 120px 0 60px; text-align: center; border-top: 1px solid #111; }
+        .idx-footer p { font-size: 2rem; font-weight: 900; margin-bottom: 15px; letter-spacing: -2px; }
+        .idx-footer small { color: #444; font-weight: 800; text-transform: uppercase; letter-spacing: 4px; font-size: 0.75rem; }
+        .idx-footer small span { color: var(--idx-primary); }
 
-        /* TABLET & DESKTOP DÜZENLEMELERİ (Responsive Geçişleri) */
-        @media (min-width: 768px) {
-            .idx-nav-item { display: inline-block; }
-            .idx-tech-grid { grid-template-columns: repeat(4, 1fr); }
-            .idx-bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); }
-            .idx-b-main { grid-column: span 8; }
-            .idx-b-side { grid-column: span 4; }
-            .idx-b-wide { grid-column: span 12; }
-            .idx-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
-            .idx-nav-container { padding: 0 40px; }
-            .idx-logo { font-size: 1.3rem; }
-            .idx-btn-start { font-size: 0.85rem; padding: 10px 24px; }
+        @media (max-width: 1000px) {
+            .idx-bento-grid, .idx-pricing-grid { grid-template-columns: 1fr !important; }
+            .idx-b-main, .idx-b-side, .idx-b-wide { grid-column: span 1 !important; }
         }
     </style>
 </head>
@@ -169,7 +127,8 @@
             <div class="idx-nav-links">
                 <a href="#idx-tech" class="idx-nav-item">Teknoloji</a>
                 <a href="#idx-bento" class="idx-nav-item">Modüller</a>
-                <a href="/giris" class="idx-btn-start">GİRİŞ YAP</a>
+                <a href="#idx-pricing" class="idx-nav-item">Paketler</a>
+                <a href="/giris" class="idx-btn-start">DEMO GİRİŞİ</a>
             </div>
         </div>
     </nav>
@@ -177,19 +136,20 @@
     <header class="idx-hero">
         <div class="idx-hero-inner">
             <div class="idx-badge" data-aos="fade-down">
-                <i class="fas fa-rocket"></i> Lojistik 4.0 Hazır
+                <i class="fas fa-rocket"></i> Geleceğin Lojistik Standartları
             </div>
-            <h1 data-aos="fade-up">Lojistikte <br><span class="idx-gradient">Dijital Çağ.</span></h1>
+            <h1 data-aos="fade-up">Lojistik Firmaları İçin <br><span class="idx-gradient">Teknoloji Devrimi.</span></h1>
             <p data-aos="fade-up" data-aos-delay="100">
-                Operasyonunuzu cebinize taşıyın. Akıllı takip ve raporlama ile firmanızı her yerden yönetin.
+                Ege Kalyon Yazılım ile operasyonunuzu saniyeler içinde dijitalleştirin. 
+                Arvento, Luca ve Akıllı Raporlama altyapısıyla firmanızı bir teknoloji üssüne dönüştürün.
             </p>
             
             <div id="idx-tech" class="idx-tech-area" data-aos="zoom-in" data-aos-delay="200">
                 <div class="idx-tech-grid">
-                    <div class="idx-tech-card" onclick="toggleTech('nodejs', this)"><i class="fab fa-node-js"></i><span>NODE.JS</span></div>
-                    <div class="idx-tech-card" onclick="toggleTech('saas', this)"><i class="fas fa-cloud"></i><span>BULUT</span></div>
-                    <div class="idx-tech-card" onclick="toggleTech('arvento', this)"><i class="fas fa-satellite"></i><span>TAKİP</span></div>
-                    <div class="idx-tech-card" onclick="toggleTech('security', this)"><i class="fas fa-user-shield"></i><span>GÜVENLİK</span></div>
+                    <div class="idx-tech-card" onclick="toggleTech('nodejs', this)"><i class="fab fa-node-js"></i><span>HIZLI MOTOR</span></div>
+                    <div class="idx-tech-card" onclick="toggleTech('saas', this)"><i class="fas fa-cloud"></i><span>SaaS MİMARİSİ</span></div>
+                    <div class="idx-tech-card" onclick="toggleTech('arvento', this)"><i class="fas fa-satellite"></i><span>CANLI TAKİP</span></div>
+                    <div class="idx-tech-card" onclick="toggleTech('security', this)"><i class="fas fa-user-shield"></i><span>VERİ GÜVENLİĞİ</span></div>
                 </div>
                 <div id="techPanel" class="idx-info-panel">
                     <h4 id="techTitle"></h4>
@@ -201,56 +161,35 @@
 
     <section id="idx-bento" class="idx-bento-section">
         <div class="idx-bento-grid">
-            <div class="idx-bento-card idx-b-main" data-aos="fade-up">
+            <div class="idx-bento-card idx-b-main" data-aos="fade-right">
                 <i class="fas fa-microchip idx-bg-icon"></i>
-                <h3>Dijital <br>Yönetim</h3>
-                <p>Kağıt trafiğine son verin. Tüm süreci tek merkezden, gerçek zamanlı yönetin.</p>
+                <h3>%100 Dijital <br>Operasyon Yönetimi</h3>
+                <p>Kağıt, kalem ve karmaşık Excel dosyalarını tarihe gömün. Şoför portföyünden plaka tanımlarına kadar her süreci Ege Kalyon Yazılım ile tek bir merkezden yönetin.</p>
             </div>
             
-            <div class="idx-bento-card idx-b-side" data-aos="fade-up" data-aos-delay="100">
+            <div class="idx-bento-card idx-b-side" data-aos="fade-left">
                 <i class="fas fa-chart-line idx-bg-icon"></i>
-                <h3>Anlık <br>Rapor</h3>
-                <p>Verimlilik verilerine anında ulaşın, kararlarınızı hızlandırın.</p>
+                <h3>Akıllı <br>Raporlama</h3>
+                <p>Verimlilik metriklerini ve sevkiyat hacimlerini anlık analiz edin, stratejik kararlarınızı gerçek verilere dayandırın.</p>
             </div>
 
-            <div class="idx-bento-card idx-b-wide" data-aos="fade-up" data-aos-delay="200">
+            <div class="idx-bento-card idx-b-wide" data-aos="zoom-in" data-aos-delay="100">
                 <i class="fas fa-handshake-angle idx-bg-icon"></i>
-                <h3>Müşteri Şeffaflığı</h3>
-                <p>Müşterilerinize özel panellerle yüklerini izletin, markanıza olan güveni %100 artırın.</p>
+                <h3>Müşterileriniz İçin Tam Şeffaflık</h3>
+                <p>Yazılımımız sadece size değil, müşterilerinize de hizmet eder. Onlara sunacağınız özel erişim yetkileriyle sevkiyatlarını ve bekleme sürelerini anlık takip etmelerini sağlayarak %100 güven oluşturun.</p>
             </div>
         </div>
     </section>
 
-    <section id="idx-pricing" class="idx-pricing-section">
-        <div class="idx-pricing-grid">
-            <div class="idx-price-card" data-aos="fade-up">
-                <h4>KOBİ</h4>
-                <div class="price">₺3.450 <span>/ay</span></div>
-                <ul class="idx-price-list">
-                    <li><i class="fas fa-check"></i> 500 Sevkiyat</li>
-                    <li><i class="fas fa-check"></i> Arvento API</li>
-                    <li><i class="fas fa-check"></i> Email Destek</li>
-                </ul>
-                <a href="/giris" class="idx-btn-start" style="display:block; text-align:center;">Demo</a>
-            </div>
-            
-            <div class="idx-price-card featured" data-aos="fade-up" data-aos-delay="100">
-                <h4>PROFESYONEL</h4>
-                <div class="price">₺7.200 <span>/ay</span></div>
-                <ul class="idx-price-list">
-                    <li><i class="fas fa-check"></i> Sınırsız Kayıt</li>
-                    <li><i class="fas fa-check"></i> Luca Entegrasyon</li>
-                    <li><i class="fas fa-check"></i> Müşteri Portalı</li>
-                </ul>
-                <a href="/giris" class="idx-btn-start" style="display:block; text-align:center;">Hemen Başla</a>
-            </div>
+   
 
             <div class="idx-price-card" data-aos="fade-up" data-aos-delay="200">
                 <h4>ENTERPRISE</h4>
-                <div class="price">TEKLİF</div>
+                <div class="price">TEKLİF ALIN</div>
                 <ul class="idx-price-list">
-                    <li><i class="fas fa-check"></i> Özel Sunucu</li>
-                    <li><i class="fas fa-check"></i> White-Label</li>
+                    <li><i class="fas fa-check"></i> Özel Sunucu Altyapısı</li>
+                    <li><i class="fas fa-check"></i> White-Label (Kendi Logonuz)</li>
+                    <li><i class="fas fa-check"></i> Yerinde Teknik Eğitim</li>
                     <li><i class="fas fa-check"></i> 7/24 VIP Destek</li>
                 </ul>
                 <a href="https://www.egekalyon.com.tr" class="idx-btn-start" style="display:block; text-align:center; background:#fff; color:#000 !important;">Bize Ulaşın</a>
@@ -260,18 +199,19 @@
 
     <footer class="idx-footer">
         <p>EGE KALYON YAZILIM</p>
-        <small>Powered by Batuhan Yıldız Enterprise &copy; 2026</small>
+        <small>Powered by <span>Batuhan Yıldız Enterprise</span> &copy; 2026</small>
+        <div style="margin-top: 30px; opacity: 0.2; font-size: 0.65rem; letter-spacing: 4px;">SaaS ARCHITECTURE v1.4.2</div>
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
+        AOS.init({ duration: 1200, once: true });
 
         const techContent = {
-            nodejs: { t: 'Node.js', d: 'Binlerce veriyi aynı anda işleyen yüksek performanslı motor.' },
-            saas: { t: 'SaaS Altyapısı', d: 'Her firma için tamamen izole edilmiş, güvenli bulut alanı.' },
-            arvento: { t: 'Canlı Takip', d: 'Araçlarınızın konumunu doğrudan panelinizden izleyin.' },
-            security: { t: 'Güvenlik', d: 'AES-256 askeri düzey şifreleme ile tam koruma.' }
+            nodejs: { t: 'Elite Performans Çekirdeği', d: 'Sistem motoru olarak kullandığımız Node.js, aynı anda binlerce sevkiyat verisini işlemenizi sağlar. En yoğun operasyonlarda bile Dashboard hızından asla ödün vermez.' },
+            saas: { t: 'Multi-Tenant SaaS Altyapısı', d: 'Ege Kalyon Yazılım\'ı kullanan her lojistik firması, kendine özel izole edilmiş bir veritabanı alanına sahip olur. Verileriniz banka standartlarında gizlilikle korunur.' },
+            arvento: { t: 'Kesintisiz API Senkronizasyonu', d: 'Arvento ile kurduğumuz akıllı köprü sayesinde, araçlarınızın konumları panel dışına çıkmadan doğrudan yazılım içindeki haritalarda simüle edilir. (RESMİ ARVENTO SATICISINDAN HİZMET ALMALISINIZ)' },
+            security: { t: 'AES-256 Veri Şifreleme', d: 'Müşteri bilgileriniz, firma finansallarınız ve personel verileriniz en üst düzey askeri şifreleme protokolleri ile AWS bulut sunucularında saklanır.' }
         };
 
         function toggleTech(key, element) {
@@ -300,4 +240,3 @@
     </script>
 </body>
 </html>
-
