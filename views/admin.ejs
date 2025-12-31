@@ -1,297 +1,76 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Advanced Cockpit V2</title>
-    
-    <style>
-        :root {
-            --primary: #0071e3;
-            --accent: #29dec8;
-            --warning: #f59e0b;
-            --danger: #ff4d4d;
-            --bg-dark: #050505;
-            --card-bg: rgba(20, 20, 20, 0.7);
-            --border: rgba(255, 255, 255, 0.1);
-            --glass: rgba(255, 255, 255, 0.03);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: var(--bg-dark);
-            color: #fff;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            overflow-x: hidden;
-            display: flex;
-        }
-
-        /* --- SİDEBAR --- */
-        .sidebar {
-            width: 280px;
-            height: 100vh;
-            background: rgba(10, 10, 10, 0.95);
-            border-right: 1px solid var(--border);
-            padding: 40px 20px;
-            position: fixed;
-            z-index: 100;
-        }
-        .sidebar-title {
-            font-size: 1.5rem;
-            font-weight: 900;
-            letter-spacing: -1px;
-            margin-bottom: 50px;
-            color: var(--primary);
-        }
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: #888;
-            text-decoration: none;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            transition: 0.3s;
-            font-weight: 600;
-        }
-        .sidebar-nav a:hover, .sidebar-nav a.active {
-            background: var(--glass);
-            color: #fff;
-            border-left: 4px solid var(--primary);
-        }
-
-        /* --- ANA İÇERİK --- */
-        .admin-main {
-            flex: 1;
-            margin-left: 280px;
-            padding: 40px;
-            min-height: 100vh;
-            background: radial-gradient(circle at top right, #0a1120, #050505);
-        }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 50px;
-        }
-        .highlight { color: var(--primary); font-weight: 900; }
-
-        /* --- COCKPIT GRID --- */
-        .grid-cockpit-v2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .cyber-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 30px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-        .cyber-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05));
-            pointer-events: none;
-        }
-        .cyber-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        .cyber-card i { font-size: 2rem; color: var(--primary); }
-        .card-info h3 { font-size: 1.1rem; margin-bottom: 5px; font-weight: 800; }
-        .card-info p { font-size: 0.85rem; color: #666; }
-
-        /* --- ÖZEL MODÜLLER --- */
-        .bekleme-panel {
-            grid-column: span 2;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), transparent);
-            border-color: var(--warning);
-        }
-        .timer-display {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .timer-unit {
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 12px;
-            text-align: center;
-            min-width: 60px;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-        .timer-unit span { display: block; font-size: 1.5rem; font-weight: 900; color: var(--warning); }
-        .timer-unit label { font-size: 0.6rem; text-transform: uppercase; color: #888; }
-
-        /* --- LUCA OVERLAY --- */
-        .luca-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 10000; display: none;
-            flex-direction: column; backdrop-filter: blur(20px);
-        }
-        .luca-toolbar { background: #111; padding: 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #222; }
-
-        /* --- ANIMASYONLAR --- */
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        .live-dot { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 10px; animation: pulse 2s infinite; }
-
-        @media (max-width: 1000px) {
-            .sidebar { display: none; }
-            .admin-main { margin-left: 0; padding: 20px; }
-            .grid-cockpit-v2 { grid-template-columns: 1fr; }
-            .bekleme-panel { grid-column: span 1; }
-        }
-    </style>
-</head>
-<body class="admin-body">
-
-    <aside class="sidebar">
-        <div class="sidebar-title">EGE KALYON <span style="color: #fff;">V2</span></div>
-        <nav class="sidebar-nav">
-            <a href="/admin" class="active"><i class="fas fa-layer-group"></i> Kontrol Merkezi</a>
-            <a href="/cizelge"><i class="fas fa-truck-loading"></i> Sevkiyat Takibi</a>
-            <a href="#"><i class="fas fa-wallet"></i> Finans Paneli</a>
-            <a href="#"><i class="fas fa-users-cog"></i> Personel</a>
-            <a href="/cikis" style="margin-top: 50px; color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Güvenli Çıkış</a>
-        </nav>
-    </aside>
-
-    <main class="admin-main">
-        <header class="admin-header" data-aos="fade-down">
-            <div>
-                <h1>Operasyon Şefi, <span class="highlight"><%= firma %></span></h1>
-                <p style="color: #666; margin-top: 8px;"><span class="live-dot"></span>Sistem Terminale Bağlı. Tüm sensörler aktif.</p>
+<div class="cyber-card bekleme-panel" data-aos="fade-up">
+    <div style="width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="card-info">
+                <h3 style="color: var(--warning);"><i class="fas fa-hourglass-half"></i> ARAÇ BEKLEME ANALİZİ</h3>
+                <p>6 Saatlik periyotlar üzerinden otomatik hesaplama.</p>
             </div>
-            <div style="text-align: right;">
-                <div style="font-size: 0.8rem; color: #444; font-weight: 900; letter-spacing: 2px;">VIRTUAL TERMINAL</div>
-                <div style="font-size: 1.2rem; font-weight: 900;"><%= new Date().toLocaleTimeString('tr-TR') %></div>
+            <div id="periyot-badge" style="background: var(--danger); color: #fff; padding: 10px 20px; border-radius: 50px; font-weight: 900; font-size: 0.9rem; box-shadow: 0 0 20px rgba(255, 77, 77, 0.3);">
+                0 BEKLEME
             </div>
-        </header>
-
-        <section class="grid-cockpit-v2">
-            
-            <div class="cyber-card bekleme-panel" data-aos="fade-up">
-                <div style="width: 100%;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="card-info">
-                            <h3 style="color: var(--warning);"><i class="fas fa-hourglass-half"></i> KRİTİK BEKLEME SÜRESİ</h3>
-                            <p>Sınırı aşan sevkiyatlar için aktif sayaç.</p>
-                        </div>
-                        <div style="font-size: 2rem; font-weight: 900; opacity: 0.1;">ALERT</div>
-                    </div>
-                    <div class="timer-display" id="global-timer">
-                        <div class="timer-unit"><span id="days">00</span><label>GÜN</label></div>
-                        <div class="timer-unit"><span id="hours">00</span><label>SAAT</label></div>
-                        <div class="timer-unit"><span id="minutes">00</span><label>DAKİKA</label></div>
-                        <div class="timer-unit"><span id="seconds">00</span><label>SANİYE</label></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="cyber-card" onclick="location.href='/cizelge'" data-aos="fade-up" data-aos-delay="100">
-                <i class="fas fa-route"></i>
-                <div class="card-info"><h3>Dijital Çizelge</h3><p>Aktif iş emirleri ve sevkiyat planı.</p></div>
-            </div>
-
-            <div class="cyber-card" onclick="openLucaEmbedded()" data-aos="fade-up" data-aos-delay="200" style="border-color: var(--accent);">
-                <i class="fas fa-file-invoice" style="color: var(--accent);"></i>
-                <div class="card-info"><h3>Luca Muhasebe</h3><p>Entegre finansal yönetim sistemi.</p></div>
-            </div>
-
-            <a href="https://web.arvento.com/" target="_blank" class="cyber-card" data-aos="fade-up" data-aos-delay="300">
-                <i class="fas fa-satellite-dish" style="color: #ff4d4d;"></i>
-                <div class="card-info"><h3>Filo Canlı Takip</h3><p>Arvento GPS terminaline bağlan.</p></div>
-            </a>
-
-            <div class="cyber-card" data-aos="fade-up" style="opacity: 0.6; border-style: dashed;">
-                <i class="fas fa-brain"></i>
-                <div class="card-info"><h3>Yapay Zeka Rapor</h3><p>Verimlilik analizi (Çok Yakında)</p></div>
-            </div>
-
-            <div class="cyber-card" data-aos="fade-up">
-                <i class="fas fa-gas-pump"></i>
-                <div class="card-info"><h3>Yakıt Entegrasyonu</h3><p>Shell/BP otomasyon verileri.</p></div>
-            </div>
-
-            <div class="cyber-card" data-aos="fade-up">
-                <i class="fas fa-box-open"></i>
-                <div class="card-info"><h3>Depo Stok Kontrol</h3><p>QR kodlu malzeme yönetimi.</p></div>
-            </div>
-
-            <div class="cyber-card" data-aos="fade-up">
-                <i class="fas fa-shield-alt"></i>
-                <div class="card-info"><h3>Sigorta / Kasko</h3><p>Poliçe vade ve hasar takibi.</p></div>
-            </div>
-
-            <div class="cyber-card" data-aos="fade-up">
-                <i class="fas fa-file-contract"></i>
-                <div class="card-info"><h3>Müşteri Sözleşmeleri</h3><p>Dijital arşiv ve hatırlatıcı.</p></div>
-            </div>
-
-            <div class="cyber-card" data-aos="fade-up">
-                <i class="fas fa-tools"></i>
-                <div class="card-info"><h3>Bakım Onarım</h3><p>Periyodik servis ve lastik takibi.</p></div>
-            </div>
-
-        </section>
-    </main>
-
-    <div id="luca-overlay" class="luca-overlay">
-        <div class="luca-toolbar">
-            <h2 style="color: var(--accent); font-weight: 900;"><i class="fas fa-calculator"></i> LUCA TERMINAL</h2>
-            <button onclick="closeLucaEmbedded()" style="background: var(--danger); border: none; padding: 10px 20px; border-radius: 8px; color: #fff; font-weight: 900; cursor: pointer;">SİSTEMİ KAPAT ✕</button>
         </div>
-        <iframe id="luca-iframe" style="flex: 1; border: none; background: #fff;" src=""></iframe>
+
+        <div class="timer-display">
+            <div class="timer-unit"><span id="days">00</span><label>GÜN</label></div>
+            <div class="timer-unit"><span id="hours">00</span><label>SAAT</label></div>
+            <div class="timer-unit"><span id="minutes">00</span><label>DAKİKA</label></div>
+            <div class="timer-unit"><span id="seconds">00</span><label>SANİYE</label></div>
+        </div>
+
+        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.8rem; color: #666;">SONRAKİ BEKLEME PERİYODUNA:</span>
+            <span id="next-period-timer" style="color: var(--accent); font-weight: bold; font-family: monospace;">--:--:--</span>
+        </div>
     </div>
+</div>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({ duration: 800, once: true });
+<script>
+    // ÖNEMLİ: startTime değişkenini aracın giriş yaptığı saat olarak ayarla. 
+    // Örnek: Veritabanından gelen 'giris_saati' verisi buraya basılmalı.
+    const vehicleEntryTime = new Date().getTime() - (13 * 60 * 60 * 1000); // Test için: 13 saat önce girmiş varsayalım
 
-        // --- GELİŞMİŞ SAYAÇ SİSTEMİ (GÜN-SAAT-DAK-SAN) ---
-        // Örnek: Sevkiyatın başladığı tarih (Sen buraya veritabanından gelen tarihi basabilirsin)
-        const startTime = new Date().getTime() - (1 * 24 * 60 * 60 * 1000 + 5 * 60 * 60 * 1000); // 1 gün 5 saat öncesi misal
+    function updateOperationalTimer() {
+        const now = new Date().getTime();
+        const diff = now - vehicleEntryTime;
 
-        function updateTimers() {
-            const now = new Date().getTime();
-            const diff = now - startTime;
+        // Toplam Saat Hesaplama
+        const totalHours = diff / (1000 * 60 * 60);
+        
+        // 6 SAATTE 1 BEKLEME HESABI
+        const beklemeSayisi = Math.floor(totalHours / 6);
+        
+        // Görsel Sayaç Hesapları
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
+        // Bir sonraki 6 saatlik periyoda kalan süre
+        const remainingMs = ( (beklemeSayisi + 1) * 6 * 60 * 60 * 1000 ) - diff;
+        const remH = Math.floor(remainingMs / (1000 * 60 * 60));
+        const remM = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        const remS = Math.floor((remainingMs % (1000 * 60)) / 1000);
 
-            document.getElementById("days").innerText = d.toString().padStart(2, '0');
-            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
-            document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
-            document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+        // Ekranı Güncelle
+        document.getElementById("days").innerText = d.toString().padStart(2, '0');
+        document.getElementById("hours").innerText = h.toString().padStart(2, '0');
+        document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
+        document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+        
+        document.getElementById("periyot-badge").innerText = beklemeSayisi + " BEKLEME";
+        document.getElementById("next-period-timer").innerText = 
+            remH.toString().padStart(2, '0') + ":" + 
+            remM.toString().padStart(2, '0') + ":" + 
+            remS.toString().padStart(2, '0');
+            
+        // Eğer bekleme varsa rengi uyar (Warning)
+        if (beklemeSayisi > 0) {
+            document.getElementById("periyot-badge").style.background = "var(--danger)";
+        } else {
+            document.getElementById("periyot-badge").style.background = "#22c55e"; // Bekleme yoksa yeşil
         }
+    }
 
-        setInterval(updateTimers, 1000);
-
-        // --- LUCA KONTROL ---
-        function openLucaEmbedded() {
-            document.getElementById('luca-iframe').src = "https://www.luca.com.tr/";
-            document.getElementById('luca-overlay').style.display = 'flex';
-        }
-        function closeLucaEmbedded() {
-            document.getElementById('luca-overlay').style.display = 'none';
-            document.getElementById('luca-iframe').src = "";
-        }
-    </script>
-</body>
-</html>
+    setInterval(updateOperationalTimer, 1000);
+    updateOperationalTimer();
+</script>
