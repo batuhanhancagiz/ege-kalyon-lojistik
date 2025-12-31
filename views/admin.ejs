@@ -5,21 +5,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V2.0</title>
+    <title>Ege Kalyon | Terminal V2.1 Happy New Year</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
             --primary: #0071e3; --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08);
         }
 
-        body { background: radial-gradient(circle at top right, #0a1120, #050505); }
+        body { background: radial-gradient(circle at top right, #0a1120, #050505); overflow-x: hidden; }
         
+        /* --- YILBAŞI ÖZEL: NOEL AĞACI ANİMASYONU --- */
+        .new-year-tree {
+            position: fixed; bottom: 20px; font-size: 50px; z-index: 5000;
+            filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
+            animation: treeGlow 2s infinite alternate;
+            pointer-events: none;
+        }
+        .tree-left { left: 300px; }
+        .tree-right { right: 30px; }
+        @keyframes treeGlow { from { opacity: 0.7; transform: scale(1); } to { opacity: 1; transform: scale(1.1); } }
+
+        /* --- HAVAİ FİŞEK KANVASI --- */
+        #fireworks-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 4000;
+        }
+
         /* MODAL & OVERLAY */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); }
         .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 580px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
 
-        /* HESAPLAMA GRUPLARI (ESKİ STİL) */
+        /* HESAPLAMA GRUPLARI */
         .calc-group { background: var(--glass); padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .calc-group label { display: block; font-size: 0.7rem; color: #555; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; }
         .input-row { display: flex; gap: 8px; justify-content: center; }
@@ -33,19 +50,21 @@
         .res-timer label { font-size: 0.5rem; color: #444; font-weight: 800; }
         #periyot-final { background: var(--warning); color: #000; padding: 12px; border-radius: 50px; font-weight: 900; display: block; text-align: center; font-size: 0.9rem; }
 
-        /* INFO LIST */
         .info-list { list-style: none; padding: 0; }
         .info-list li { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #111; font-size: 0.9rem; }
         .info-list li span:first-child { color: #555; font-weight: 700; }
         .info-list li span:last-child { color: var(--accent); font-weight: 900; font-family: monospace; }
 
-        /* KARTLAR */
         .status-pulse { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
         #digital-clock { font-size: 2.2rem; font-weight: 950; color: #fff; letter-spacing: -2px; }
         #digital-date { font-size: 0.8rem; color: var(--accent); font-weight: 800; letter-spacing: 3px; }
     </style>
 </head>
 <body class="admin-body">
+    <canvas id="fireworks-canvas"></canvas>
+    <div class="new-year-tree tree-left">🎄</div>
+    <div class="new-year-tree tree-right">🎄</div>
+
     <aside class="sidebar">
         <div class="sidebar-title">EGE KALYON <span>PRO</span></div>
         <nav class="sidebar-nav">
@@ -59,7 +78,7 @@
         <header class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
             <div data-aos="fade-right">
                 <h1>Terminal <span class="highlight">Otoritesi</span></h1>
-                <p style="color: #444; margin-top: 5px;">Bağlantı katmanı aktif. Merhaba, <%= firma %></p>
+                <p style="color: #444; margin-top: 5px;">Mutlu Yıllar! Bağlantı katmanı aktif. <%= firma %></p>
             </div>
             <div style="text-align: right;" data-aos="fade-left">
                 <div id="digital-clock">00:00:00</div>
@@ -114,7 +133,6 @@
     <div id="bekleme-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2><i class="fas fa-clock"></i> BEKLEME TERMİNALİ</h2><span onclick="closeModal('bekleme-modal')" style="cursor:pointer">✕</span></div>
-            
             <div class="calc-group">
                 <label>GİRİŞ (GG / AA / YYYY / SS:DK)</label>
                 <div class="input-row">
@@ -125,7 +143,6 @@
                     <input type="number" id="in-min" placeholder="DK" oninput="liveCalc()">
                 </div>
             </div>
-
             <div class="calc-group">
                 <label style="color: var(--accent);">ÇIKIŞ (BOŞSA "ŞİMDİ")</label>
                 <div class="input-row">
@@ -136,7 +153,6 @@
                     <input type="number" id="out-min" placeholder="DK" oninput="liveCalc()">
                 </div>
             </div>
-
             <div class="result-screen">
                 <div class="res-timer">
                     <div><span id="res-d">00</span><label>GÜN</label></div>
@@ -149,13 +165,35 @@
         </div>
     </div>
 
-    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU DURUMU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt / Cloud</span></li><li><span>Uptime:</span><span>%99.98</span></li><li><span>CPU:</span><span>%4.2</span></li><li><span>Node.js:</span><span>v20.x</span></li></ul></div></div>
-    <div id="db-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>VERİTABANI</h2><span onclick="closeModal('db-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Motor:</span><span>SQLite 3</span></li><li><span>Yedekleme:</span><span>Günlük / Bulut</span></li><li><span>Hız:</span><span>0.1ms (Query)</span></li></ul></div></div>
-    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>SHA-256 (Aktif)</span></li><li><span>WAF:</span><span>Arttırılmış Koruma</span></li><li><span>Şifreleme:</span><span>AES-GCM</span></li></ul></div></div>
+    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU DURUMU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt / Cloud</span></li><li><span>Uptime:</span><span>%99.98</span></li></ul></div></div>
+    <div id="db-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>VERİTABANI</h2><span onclick="closeModal('db-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Motor:</span><span>SQLite 3</span></li></ul></div></div>
+    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>SHA-256 (Aktif)</span></li></ul></div></div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         AOS.init();
+        
+        // --- HAVAFİŞEK EFEKTİ (SÜREKLİ) ---
+        function frame() {
+            confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#ff0000', '#00ff00', '#ffffff', '#ffd700']
+            });
+            confetti({
+                particleCount: 2,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#ff0000', '#00ff00', '#ffffff', '#ffd700']
+            });
+            requestAnimationFrame(frame);
+        }
+        frame();
+
         setInterval(() => {
             const now = new Date();
             document.getElementById('digital-clock').innerText = now.toLocaleTimeString('tr-TR');
@@ -171,18 +209,15 @@
             const inY = document.getElementById('in-y').value;
             const inH = document.getElementById('in-h').value;
             const inMin = document.getElementById('in-min').value;
-
             const outD = document.getElementById('out-d').value;
             const outM = document.getElementById('out-m').value;
             const outY = document.getElementById('out-y').value;
             const outH = document.getElementById('out-h').value;
             const outMin = document.getElementById('out-min').value;
-
             if(inD && inM && inY && inH && inMin) {
                 const start = new Date(inY, inM-1, inD, inH, inMin);
                 let end = new Date();
                 if(outD && outM && outY && outH && outMin) end = new Date(outY, outM-1, outD, outH, outMin);
-                
                 const diff = end - start;
                 if(diff > 0) {
                     document.getElementById('res-d').innerText = Math.floor(diff / 86400000).toString().padStart(2,'0');
@@ -193,7 +228,6 @@
                     const status = document.getElementById('periyot-final');
                     status.innerText = wait + " BEKLEME HESAPLANDI";
                     status.style.background = wait > 0 ? "var(--danger)" : "var(--warning)";
-                    status.style.color = wait > 0 ? "#fff" : "#000";
                 }
             }
         }
