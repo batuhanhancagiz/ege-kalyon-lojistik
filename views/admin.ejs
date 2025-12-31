@@ -5,107 +5,126 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Pro Terminal V1.7</title>
+    <title>Ege Kalyon | Terminal V1.8</title>
     <style>
-        :root { --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; --glass: rgba(255, 255, 255, 0.03); }
-        
-        /* --- MODAL TASARIM --- */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
-        .modal-content { background: #0a0a0a; margin: 2% auto; padding: 30px; border: 1px solid #222; width: 95%; max-width: 550px; border-radius: 30px; }
-        
-        /* HESAPLAMA GRUPLARI */
-        .calc-group { background: var(--glass); padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .calc-group label { display: block; font-size: 0.6rem; font-weight: 800; color: #555; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .input-row { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
-        .input-row input { 
-            background: #000 !important; border: 1px solid #333 !important; color: var(--accent) !important; 
-            width: 55px; padding: 12px 0; text-align: center; border-radius: 12px !important; font-weight: 900; font-size: 1rem;
+        :root { 
+            --accent: #29dec8; 
+            --warning: #f59e0b; 
+            --danger: #ff4d4d; 
+            --primary: #0071e3;
+            --glass: rgba(255, 255, 255, 0.02); 
+            --border: rgba(255, 255, 255, 0.08);
         }
-        .input-row input.year-input { width: 80px; }
 
-        /* SONUÇ EKRANI */
-        .result-screen { background: #000; padding: 25px; border-radius: 20px; border: 1px solid #222; text-align: center; }
-        .res-timer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
-        .res-timer div { background: #111; padding: 15px 0; border-radius: 15px; border: 1px solid #222; }
-        .res-timer span { display: block; font-size: 1.4rem; font-weight: 900; color: #fff; }
-        .res-timer label { font-size: 0.5rem; color: #444; font-weight: 800; }
+        /* --- MODERN NEON THEME --- */
+        body { background: radial-gradient(circle at top right, #0a1120, #050505); }
         
-        #periyot-final { background: var(--warning); color: #000; padding: 10px 25px; border-radius: 50px; font-weight: 900; font-size: 0.9rem; display: inline-block; }
+        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); }
+        .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 580px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
 
-        /* HEADER SAAT */
-        #digital-clock { font-size: 2rem; font-weight: 900; color: #fff; letter-spacing: -1px; }
-        #digital-date { font-size: 0.85rem; color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+        /* HESAPLAMA GRUPLARI */
+        .calc-group { background: var(--glass); padding: 20px; border-radius: 25px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .calc-group label { display: block; font-size: 0.65rem; font-weight: 800; color: #555; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px; }
+        .input-row { display: flex; gap: 8px; justify-content: center; }
+        .input-row input { 
+            background: #000 !important; border: 1px solid #222 !important; color: var(--accent) !important; 
+            width: 60px; padding: 15px 0; text-align: center; border-radius: 15px !important; font-weight: 900; font-size: 1.1rem; transition: 0.3s;
+        }
+        .input-row input:focus { border-color: var(--accent) !important; box-shadow: 0 0 20px rgba(41, 222, 200, 0.15); }
+        .input-row .year-input { width: 90px; }
 
-        /* YENİ KUTU ÖZELLİĞİ */
-        .status-badge { font-size: 0.6rem; padding: 3px 8px; border-radius: 5px; background: rgba(41, 222, 200, 0.1); color: var(--accent); float: right; }
+        /* SAYAÇ EKRANI */
+        .result-screen { background: #000; padding: 30px; border-radius: 25px; border: 1px solid #111; text-align: center; }
+        .res-timer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .res-timer div { background: linear-gradient(180deg, #0a0a0a, #000); padding: 18px 0; border-radius: 20px; border: 1px solid #1a1a1a; }
+        .res-timer span { display: block; font-size: 1.6rem; font-weight: 900; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .res-timer label { font-size: 0.55rem; color: #444; font-weight: 800; }
+        
+        #periyot-final { background: var(--warning); color: #000; padding: 12px 30px; border-radius: 100px; font-weight: 900; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2); }
+
+        /* KART TASARIMLARI */
+        .cyber-card { position: relative; overflow: hidden; }
+        .status-pulse { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+        .card-tag { font-size: 0.6rem; background: var(--glass); padding: 4px 10px; border-radius: 8px; color: #555; font-weight: 800; }
+
+        /* SAAT */
+        #digital-clock { font-size: 2.2rem; font-weight: 950; letter-spacing: -2px; color: #fff; line-height: 1; }
+        #digital-date { font-size: 0.8rem; color: var(--accent); font-weight: 800; letter-spacing: 3px; }
     </style>
 </head>
 <body class="admin-body">
     <aside class="sidebar">
-        <div class="sidebar-title">EGE KALYON <span style="color: #fff;">V1.7</span></div>
+        <div class="sidebar-title">EGE KALYON <span>PRO</span></div>
         <nav class="sidebar-nav">
-            <a href="/admin" class="active"><i class="fas fa-microchip"></i> Sistem Paneli</a>
-            <a href="/cizelge"><i class="fas fa-truck-container"></i> Operasyon</a>
-            <a href="#"><i class="fas fa-file-invoice-dollar"></i> Finans</a>
-            <a href="#"><i class="fas fa-shield-alt"></i> Güvenlik</a>
-            <a href="/cikis" style="margin-top: 40px; color: var(--danger);"><i class="fas fa-power-off"></i> Çıkış</a>
+            <a href="/admin" class="active"><i class="fas fa-terminal"></i> Dashboard</a>
+            <a href="/cizelge"><i class="fas fa-truck-fast"></i> Operasyon</a>
+            <a href="#"><i class="fas fa-file-contract"></i> Sözleşmeler</a>
+            <a href="#"><i class="fas fa-microchip"></i> Sistem Ayarları</a>
+            <a href="/cikis" style="margin-top: 50px; color: var(--danger);"><i class="fas fa-power-off"></i> Çıkış</a>
         </nav>
     </aside>
 
     <main class="admin-main">
-        <header class="admin-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <header class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div data-aos="fade-right">
-                <h1>Terminal Dashboard, <span class="highlight"><%= firma %></span></h1>
-                <p style="color: #666; margin-top: 5px;"><i class="fas fa-check-circle" style="color: #22c55e;"></i> Tüm API servisleri stabil çalışıyor.</p>
+                <h1 style="font-size: 1.8rem;">Terminal <span class="highlight">Cockpit</span></h1>
+                <p style="color: #555; margin-top: 8px;">Hoş geldin <%= firma %>, tüm sistemler stabil.</p>
             </div>
             <div style="text-align: right;" data-aos="fade-left">
                 <div id="digital-clock">00:00:00</div>
-                <div id="digital-date">YÜKLENİYOR...</div>
+                <div id="digital-date">...</div>
             </div>
         </header>
 
         <section class="grid-cockpit-v2">
-            <div class="cyber-card" onclick="openModal('bekleme-modal')" style="cursor: pointer; border-color: var(--warning);" data-aos="fade-up">
-                <i class="fas fa-history" style="color: var(--warning) !important;"></i>
-                <div class="card-info"><h3>Bekleme Analizörü</h3><p>GG/AA/YYYY Detaylı Hesaplama</p></div>
+            <div class="cyber-card" onclick="openModal('bekleme-modal')" style="cursor: pointer; border-color: var(--warning);" data-aos="zoom-in">
+                <div class="status-pulse"></div>
+                <i class="fas fa-stopwatch" style="color: var(--warning) !important;"></i>
+                <div class="card-info"><h3>Bekleme Terminali</h3><p>6 Saatte 1 Hakediş Analizi</p></div>
             </div>
 
-            <div class="cyber-card luca-box" onclick="openLucaEmbedded()" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="100">
-                <i class="fas fa-calculator"></i>
-                <div class="card-info"><h3>Luca Terminal</h3><p>Muhasebe Veri Akışı</p></div>
-            </div>
+            <a href="https://web.arvento.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: #ff4d4d;" data-aos="zoom-in" data-aos-delay="100">
+                <i class="fas fa-satellite-dish" style="color: #ff4d4d !important;"></i>
+                <div class="card-info"><h3>Arvento Takip</h3><p>Canlı Uydu Bağlantısı</p></div>
+            </a>
 
-            <a href="https://web.arvento.com/" target="_blank" class="cyber-card" style="text-decoration: none;" data-aos="fade-up" data-aos-delay="200">
-                <i class="fas fa-satellite" style="color: #ff4d4d !important;"></i>
-                <div class="card-info"><h3>Arvento Live</h3><p>GPS Uydu Bağlantısı</p></div>
+            <a href="https://www.luca.com.tr/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--accent);" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fas fa-calculator" style="color: var(--accent) !important;"></i>
+                <div class="card-info"><h3>Luca Finans</h3><p>Bulut Muhasebe Terminali</p></div>
             </a>
 
             <div class="cyber-card" data-aos="fade-up">
-                <span class="status-badge">AKTİF</span>
+                <div class="card-tag">SQLITE V3</div>
                 <i class="fas fa-database" style="color: #a855f7 !important;"></i>
-                <div class="card-info"><h3>Bulut Depolama</h3><p>SQLite/MongoDB Yedekleme</p></div>
+                <div class="card-info"><h3>Veritabanı</h3><p>Lokal Veri Kaydı Aktif</p></div>
             </div>
 
-            <div class="cyber-card" data-aos="fade-up">
-                <span class="status-badge">V1.0</span>
-                <i class="fas fa-code-branch" style="color: #3b82f6 !important;"></i>
-                <div class="card-info"><h3>API Entegrasyon</h3><p>RESTful Servis Durumu</p></div>
-            </div>
-
-            <div class="cyber-card" data-aos="fade-up" style="opacity: 0.6;">
-                <span class="status-badge">YAKINDA</span>
-                <i class="fas fa-robot"></i>
-                <div class="card-info"><h3>AI Lojistik</h3><p>Rota Optimizasyon Motoru</p></div>
-            </div>
-
-            <div class="cyber-card" onclick="location.href='/cizelge'" data-aos="fade-up">
-                <i class="fas fa-table"></i>
-                <div class="card-info"><h3>Veri Çizelgesi</h3><p><%= isler.length %> Aktif İş Emri</p></div>
-            </div>
-
-            <div class="cyber-card" data-aos="fade-up">
-                <i class="fas fa-server"></i>
+            <div class="cyber-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-tag">DEPLOYED</div>
+                <i class="fas fa-server" style="color: #3b82f6 !important;"></i>
                 <div class="card-info"><h3>Sunucu Durumu</h3><p>Render.com Cluster 01</p></div>
+            </div>
+
+            <div class="cyber-card" onclick="location.href='/cizelge'" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-table-list"></i>
+                <div class="card-info"><h3>Çizelge Paneli</h3><p><%= isler.length %> Aktif Operasyon</p></div>
+            </div>
+
+            <div class="cyber-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="card-tag">NEW</div>
+                <i class="fas fa-shield-halved" style="color: #22c55e !important;"></i>
+                <div class="card-info"><h3>Güvenlik Duvarı</h3><p>AES-256 Şifreleme Aktif</p></div>
+            </div>
+
+            <div class="cyber-card" data-aos="fade-up" data-aos-delay="400" style="opacity: 0.4;">
+                <div class="card-tag">COMING SOON</div>
+                <i class="fas fa-robot"></i>
+                <div class="card-info"><h3>AI Optimizer</h3><p>Rota Analiz Motoru</p></div>
+            </div>
+
+            <div class="cyber-card" data-aos="fade-up" data-aos-delay="500">
+                <i class="fas fa-file-invoice-dollar" style="color: #fbbf24 !important;"></i>
+                <div class="card-info"><h3>E-Fatura</h3><p>Logo/Luca Entegrasyonu</p></div>
             </div>
         </section>
     </main>
@@ -113,12 +132,12 @@
     <div id="bekleme-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fas fa-stopwatch"></i> GELİŞMİŞ BEKLEME TERMİNALİ</h2>
-                <span class="close-btn" onclick="closeModal('bekleme-modal')">✕</span>
+                <h2><i class="fas fa-stopwatch-20"></i> BEKLEME TERMİNALİ</h2>
+                <span class="close-btn" onclick="closeModal('bekleme-modal')" style="cursor: pointer;">✕</span>
             </div>
             
             <div class="calc-group">
-                <label>Giriş: GÜN / AY / YIL / SAAT : DK</label>
+                <label>ARAÇ GİRİŞ (GG / AA / YYYY / SS : DK)</label>
                 <div class="input-row">
                     <input type="number" id="in-d" placeholder="GG" maxlength="2" oninput="liveCalc()">
                     <input type="number" id="in-m" placeholder="AA" maxlength="2" oninput="liveCalc()">
@@ -129,7 +148,7 @@
             </div>
 
             <div class="calc-group">
-                <label style="color: var(--accent);">Çıkış: GÜN / AY / YIL / SAAT : DK (Boşsa "ŞİMDİ")</label>
+                <label style="color: var(--accent);">ARAÇ ÇIKIŞ (BOŞSA "ŞİMDİ" ALIR)</label>
                 <div class="input-row">
                     <input type="number" id="out-d" placeholder="GG" maxlength="2" oninput="liveCalc()">
                     <input type="number" id="out-m" placeholder="AA" maxlength="2" oninput="liveCalc()">
@@ -151,19 +170,11 @@
         </div>
     </div>
 
-    <div id="luca-overlay" class="luca-overlay">
-        <div class="luca-toolbar">
-            <h2><i class="fas fa-calculator"></i> LUCA FINANCIAL INTERFACE</h2>
-            <button class="btn-close-luca" onclick="closeLucaEmbedded()">KAPAT ✕</button>
-        </div>
-        <iframe id="luca-iframe" style="flex: 1; border: none; background: #fff;" src=""></iframe>
-    </div>
-
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
 
-        // SAAT MOTORU
+        // SAAT
         setInterval(() => {
             const now = new Date();
             document.getElementById('digital-clock').innerText = now.toLocaleTimeString('tr-TR');
@@ -173,7 +184,7 @@
         function openModal(id) { document.getElementById(id).style.display = 'block'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // BEKLEME HESAPLAMA (GÜN-AY-YIL DESTEKLİ)
+        // BEKLEME HESABI
         function liveCalc() {
             const inD = document.getElementById('in-d').value;
             const inM = document.getElementById('in-m').value;
@@ -190,10 +201,7 @@
             if(inD && inM && inY && inH && inMin) {
                 const start = new Date(inY, inM-1, inD, inH, inMin);
                 let end = new Date();
-
-                if(outD && outM && outY && outH && outMin) {
-                    end = new Date(outY, outM-1, outD, outH, outMin);
-                }
+                if(outD && outM && outY && outH && outMin) end = new Date(outY, outM-1, outD, outH, outMin);
                 
                 const diff = end - start;
                 if(diff > 0) {
@@ -207,24 +215,15 @@
                     document.getElementById('res-m').innerText = m.toString().padStart(2,'0');
                     document.getElementById('res-s').innerText = s.toString().padStart(2,'0');
 
-                    const periods = Math.floor((diff / 3600000) / 6);
+                    const wait = Math.floor((diff / 3600000) / 6);
                     const status = document.getElementById('periyot-final');
-                    status.innerText = periods + " BEKLEME PERİYODU TESPİT EDİLDİ";
-                    status.style.background = periods > 0 ? "var(--danger)" : "var(--warning)";
-                    status.style.color = periods > 0 ? "#fff" : "#000";
+                    status.innerText = wait + " BEKLEME PERİYODU TESPİT EDİLDİ";
+                    status.style.background = wait > 0 ? "var(--danger)" : "var(--warning)";
+                    status.style.color = wait > 0 ? "#fff" : "#000";
                 }
             }
         }
         setInterval(liveCalc, 1000);
-
-        function openLucaEmbedded() {
-            document.getElementById('luca-iframe').src = "https://www.luca.com.tr/";
-            document.getElementById('luca-overlay').style.display = 'flex';
-        }
-        function closeLucaEmbedded() {
-            document.getElementById('luca-overlay').style.display = 'none';
-            document.getElementById('luca-iframe').src = "";
-        }
     </script>
 </body>
 </html>
