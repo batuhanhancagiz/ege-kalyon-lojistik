@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V3.2</title>
+    <title>Ege Kalyon | Terminal V3.3</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
@@ -36,13 +36,15 @@
         .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 800px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
 
-        /* AKILLI NOTLAR GÜNCEL TASARIM */
+        /* AKILLI NOTLAR GÜNCEL TASARIM V3.3 */
         .note-input-group { display: flex; gap: 10px; margin-bottom: 20px; }
         .note-input-group input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; outline: none; }
         .note-list { list-style: none; padding: 0; }
-        .note-item { background: var(--glass); border: 1px solid var(--border); padding: 12px 20px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
-        .note-text { flex: 1; color: #ccc; font-size: 0.95rem; cursor: pointer; padding-right: 15px; }
-        .note-actions { display: flex; gap: 12px; }
+        .note-item { background: var(--glass); border: 1px solid var(--border); padding: 15px 20px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .note-content-box { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        .note-text { color: #ccc; font-size: 0.95rem; }
+        .note-date { font-size: 0.7rem; color: #555; font-weight: bold; }
+        .note-actions { display: flex; gap: 15px; padding-left: 15px; }
         .note-actions button { background: none; border: none; cursor: pointer; font-size: 1rem; transition: 0.2s; }
         .note-actions button:hover { transform: scale(1.2); }
 
@@ -147,7 +149,7 @@
         <footer class="admin-footer">
             <div class="footer-top">
                 <span>Ege Kalyon Lojistik</span>
-                <span>Terminal V3.2</span>
+                <span>Terminal V3.3</span>
                 <span>2026</span>
             </div>
             <div class="footer-signature">
@@ -161,7 +163,7 @@
             <div class="modal-header"><h2><i class="fas fa-sticky-note"></i> OPERASYONEL NOTLAR</h2><span onclick="closeModal('note-modal')" style="cursor:pointer">✕</span></div>
             <div class="note-input-group">
                 <input type="text" id="note-input" placeholder="Notunuzu buraya yazın...">
-                <button id="note-save-btn" onclick="addNote()" style="background:var(--warning); padding:0 20px; border-radius:10px; font-weight:bold; cursor:pointer; border:none; height:45px;">EKLE</button>
+                <button id="note-save-btn" onclick="addNote()" style="background:var(--warning); padding:0 25px; border-radius:10px; font-weight:bold; cursor:pointer; border:none; height:45px; transition: 0.3s;">EKLE</button>
             </div>
             <ul id="note-list" class="note-list"></ul>
         </div>
@@ -208,7 +210,7 @@
         }
         function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; document.getElementById('sheets-iframe').src = ""; }
 
-        /* AKILLI NOT SİSTEMİ V3.2 - DÜZENLEME DESTEKLİ */
+        /* AKILLI NOT SİSTEMİ V3.3 - TARİH VE ÖZEL DÜZENLEME BUTONU */
         let editNoteId = null;
 
         function getNotes() { return JSON.parse(localStorage.getItem('terminal_notes_v3') || '[]'); }
@@ -218,17 +220,18 @@
             const input = document.getElementById('note-input');
             if(!input.value) return;
             const notes = getNotes();
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('tr-TR') + " " + now.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
 
             if(editNoteId) {
-                // Güncelleme Modu
-                const updatedNotes = notes.map(n => n.id === editNoteId ? {...n, text: input.value} : n);
+                const updatedNotes = notes.map(n => n.id === editNoteId ? {...n, text: input.value, date: dateStr} : n);
                 saveNotes(updatedNotes);
                 editNoteId = null;
                 document.getElementById('note-save-btn').innerText = "EKLE";
                 document.getElementById('note-save-btn').style.background = "var(--warning)";
+                document.getElementById('note-save-btn').style.color = "#000";
             } else {
-                // Yeni Ekleme Modu
-                notes.push({ id: Date.now(), text: input.value, done: false });
+                notes.push({ id: Date.now(), text: input.value, date: dateStr, done: false });
                 saveNotes(notes);
             }
             
@@ -236,11 +239,12 @@
             renderNotes();
         }
 
-        function editNote(id, text) {
+        function startEdit(id, text) {
             document.getElementById('note-input').value = text;
             editNoteId = id;
             document.getElementById('note-save-btn').innerText = "GÜNCELLE";
             document.getElementById('note-save-btn').style.background = "var(--accent)";
+            document.getElementById('note-save-btn').style.color = "#000";
             document.getElementById('note-input').focus();
         }
 
@@ -260,11 +264,14 @@
             const list = document.getElementById('note-list');
             list.innerHTML = getNotes().map(n => `
                 <li class="note-item">
-                    <span class="note-text" onclick="editNote(${n.id}, '${n.text.replace(/'/g, "\\'")}')" style="${n.done ? 'text-decoration:line-through; opacity:0.5' : ''}">${n.text}</span>
+                    <div class="note-content-box">
+                        <span class="note-text" style="${n.done ? 'text-decoration:line-through; opacity:0.5' : ''}">${n.text}</span>
+                        <span class="note-date">${n.date || ''}</span>
+                    </div>
                     <div class="note-actions">
-                        <button style="color:var(--accent)" onclick="toggleNote(${n.id})"><i class="fas fa-check-circle"></i></button>
-                        <button style="color:var(--primary)" onclick="editNote(${n.id}, '${n.text.replace(/'/g, "\\Source")}')"><i class="fas fa-edit"></i></button>
-                        <button style="color:var(--danger)" onclick="deleteNote(${n.id})"><i class="fas fa-trash"></i></button>
+                        <button style="color:var(--accent)" title="Tamamla" onclick="toggleNote(${n.id})"><i class="fas fa-check-circle"></i></button>
+                        <button style="color:var(--primary)" title="Düzenle" onclick="startEdit(${n.id}, '${n.text.replace(/'/g, "\\'")}')"><i class="fas fa-edit"></i></button>
+                        <button style="color:var(--danger)" title="Sil" onclick="deleteNote(${n.id})"><i class="fas fa-trash"></i></button>
                     </div>
                 </li>
             `).join('');
