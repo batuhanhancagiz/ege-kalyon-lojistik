@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V2.4</title>
+    <title>Ege Kalyon | Terminal V2.5</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
@@ -14,51 +14,35 @@
 
         body { background: radial-gradient(circle at top right, #0a1120, #050505); overflow-x: hidden; }
         
-        /* MODAL & OVERLAY */
+        /* MODAL & OVERLAY SİSTEMİ */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); overflow-y: auto; }
-        .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 650px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
+        .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 580px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
 
-        /* FORM DÜZENİ */
-        .info-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .form-group label { font-size: 0.65rem; color: #555; font-weight: 800; text-transform: uppercase; }
-        .form-group input { background: #000 !important; border: 1px solid #222 !important; color: #fff !important; padding: 12px; border-radius: 10px; font-size: 0.9rem; }
-        .form-group input:focus { border-color: var(--accent) !important; outline: none; }
+        /* GOOGLE SHEETS FULLSCREEN OVERLAYS */
+        .sheets-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 4000; display: none; flex-direction: column;
+            animation: slideIn 0.5s ease;
+        }
+        .sheets-toolbar {
+            background: #111; padding: 15px 30px; display: flex;
+            justify-content: space-between; align-items: center; border-bottom: 1px solid #333;
+        }
+        .sheets-toolbar h2 { color: #fff; font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .btn-close-sheets { background: var(--danger); color: white; border: none; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; }
 
-        /* HESAPLAMA GRUPLARI */
-        .calc-group { background: var(--glass); padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .calc-group label { display: block; font-size: 0.7rem; color: #555; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; }
-        .input-row { display: flex; gap: 8px; justify-content: center; }
-        .input-row input { background: #000 !important; border: 1px solid #333 !important; color: var(--accent) !important; width: 55px; padding: 12px 0; text-align: center; border-radius: 12px !important; font-weight: 900; font-size: 1.1rem; }
-        .year-input { width: 85px !important; }
-
-        /* SONUÇ VE LİSTE */
-        .result-screen { background: #000; padding: 20px; border-radius: 20px; border: 1px solid #222; text-align: center; margin-bottom: 20px; }
-        .res-timer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
-        .res-timer div { background: #111; padding: 10px 0; border-radius: 10px; }
-        .res-timer span { display: block; font-size: 1.4rem; font-weight: 900; color: #fff; }
-        #periyot-final { background: var(--warning); color: #000; padding: 12px; border-radius: 50px; font-weight: 900; display: block; margin-bottom: 15px; font-size: 0.9rem; }
-        
-        .btn-save { background: var(--accent); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: 900; width: 100%; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-save:hover { transform: scale(1.02); filter: brightness(1.1); }
-
-        .wait-list-container { margin-top: 30px; border-top: 1px solid #222; padding-top: 20px; }
-        .wait-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; color: #aaa; }
-        .wait-table th { text-align: left; color: #555; padding: 10px; border-bottom: 1px solid #222; }
-        .wait-table td { padding: 10px; border-bottom: 1px solid #111; }
-
-        /* SİSTEM MODAL STİLLERİ */
+        /* INFO LIST (SİSTEM KUTULARI İÇİN) */
         .info-list { list-style: none; padding: 0; }
         .info-list li { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #111; font-size: 0.9rem; }
         .info-list li span:first-child { color: #555; font-weight: 700; }
         .info-list li span:last-child { color: var(--accent); font-weight: 900; font-family: monospace; }
 
-        .sheets-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; display: none; flex-direction: column; }
-        .sheets-toolbar { background: #111; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
         .status-pulse { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
         #digital-clock { font-size: 2.2rem; font-weight: 950; color: #fff; letter-spacing: -2px; }
         #digital-date { font-size: 0.8rem; color: var(--accent); font-weight: 800; letter-spacing: 3px; }
+
+        @keyframes slideIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
 <body class="admin-body">
@@ -66,7 +50,8 @@
         <div class="sidebar-title">EGE KALYON <span>PRO</span></div>
         <nav class="sidebar-nav">
             <a href="/admin" class="active"><i class="fas fa-terminal"></i> Dashboard</a>
-            <a href="#" onclick="openSheets()"><i class="fas fa-table"></i> Çizelge Edit</a>
+            <a href="#" onclick="openSheets('cizelge')"><i class="fas fa-table"></i> Çizelge Edit</a>
+            <a href="#" onclick="openSheets('bekleme')"><i class="fas fa-clock"></i> Bekleme Edit</a>
             <a href="/cikis" style="margin-top: 100px; color: var(--danger);"><i class="fas fa-power-off"></i> Çıkış</a>
         </nav>
     </aside>
@@ -75,7 +60,7 @@
         <header class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
             <div data-aos="fade-right">
                 <h1>Terminal <span class="highlight">Otoritesi</span></h1>
-                <p style="color: #444; margin-top: 5px;">Kayıt ve Analiz Terminali Aktif. <%= firma %></p>
+                <p style="color: #444; margin-top: 5px;">Canlı Veri Senkronizasyonu Aktif. <%= firma %></p>
             </div>
             <div style="text-align: right;" data-aos="fade-left">
                 <div id="digital-clock">00:00:00</div>
@@ -84,15 +69,15 @@
         </header>
 
         <section class="grid-cockpit-v2">
-            <div class="cyber-card" onclick="openSheets()" style="cursor: pointer; border-color: #4285F4;" data-aos="fade-up">
+            <div class="cyber-card" onclick="openSheets('cizelge')" style="cursor: pointer; border-color: #4285F4;" data-aos="fade-up">
                 <div class="status-pulse"></div>
                 <i class="fas fa-file-excel" style="color: #4285F4 !important;"></i>
-                <div class="card-info"><h3>Dijital Çizelge (Canlı)</h3><p>E-Tabloyu Düzenle ve İzle</p></div>
+                <div class="card-info"><h3>Dijital Çizelge (Canlı)</h3><p>Ana Operasyon Tablosu</p></div>
             </div>
 
-            <div class="cyber-card" onclick="openModal('bekleme-modal')" style="cursor: pointer; border-color: var(--warning);" data-aos="fade-up" data-aos-delay="100">
+            <div class="cyber-card" onclick="openSheets('bekleme')" style="cursor: pointer; border-color: var(--warning);" data-aos="fade-up" data-aos-delay="100">
                 <i class="fas fa-stopwatch" style="color: var(--warning) !important;"></i>
-                <div class="card-info"><h3>Bekleme Takibi</h3><p>Kayıtlı Hakediş Yönetimi</p></div>
+                <div class="card-info"><h3>Bekleme Takibi (Canlı)</h3><p>Özel Bekleme Tablosu</p></div>
             </div>
 
             <a href="https://web.arvento.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: #ff4d4d;" data-aos="fade-up" data-aos-delay="200">
@@ -122,162 +107,83 @@
         </section>
     </main>
 
-    <div id="bekleme-modal" class="modal">
+    <div id="sheets-overlay" class="sheets-overlay">
+        <div class="sheets-toolbar">
+            <h2 id="sheets-title"><i class="fas fa-file-invoice"></i> EGE KALYON TERMİNALİ</h2>
+            <button class="btn-close-sheets" onclick="closeSheets()">Terminale Dön ✕</button>
+        </div>
+        <iframe id="sheets-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+
+    <div id="sunucu-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-file-signature"></i> BEKLEME KAYIT TERMİNALİ</h2>
-                <span onclick="closeModal('bekleme-modal')" style="cursor:pointer">✕</span>
-            </div>
-
-            <div class="info-form-grid">
-                <div class="form-group"><label>Müşteri</label><input type="text" id="m-musteri" placeholder="Örn: Ege Kalyon"></div>
-                <div class="form-group"><label>Booking / Ref No</label><input type="text" id="m-ref" placeholder="BKG12345"></div>
-                <div class="form-group"><label>Firma</label><input type="text" id="m-firma" placeholder="Taşıyıcı Firma"></div>
-                <div class="form-group"><label>Plaka</label><input type="text" id="m-plaka" placeholder="35 EGE 35"></div>
-                <div class="form-group" style="grid-column: span 2;"><label>Konteyner No</label><input type="text" id="m-konteyner" placeholder="EGEU 123456-7"></div>
-            </div>
-
-            <div class="calc-group">
-                <label>GİRİŞ (GG / AA / YYYY / SS:DK)</label>
-                <div class="input-row">
-                    <input type="number" id="in-d" placeholder="GG" oninput="liveCalc()">
-                    <input type="number" id="in-m" placeholder="AA" oninput="liveCalc()">
-                    <input type="number" id="in-y" class="year-input" placeholder="YYYY" oninput="liveCalc()">
-                    <input type="number" id="in-h" placeholder="SS" oninput="liveCalc()">
-                    <input type="number" id="in-min" placeholder="DK" oninput="liveCalc()">
-                </div>
-            </div>
-
-            <div class="calc-group">
-                <label style="color: var(--accent);">ÇIKIŞ (BOŞSA "ŞİMDİ")</label>
-                <div class="input-row">
-                    <input type="number" id="out-d" placeholder="GG" oninput="liveCalc()">
-                    <input type="number" id="out-m" placeholder="AA" oninput="liveCalc()">
-                    <input type="number" id="out-y" class="year-input" placeholder="YYYY" oninput="liveCalc()">
-                    <input type="number" id="out-h" placeholder="SS" oninput="liveCalc()">
-                    <input type="number" id="out-min" placeholder="DK" oninput="liveCalc()">
-                </div>
-            </div>
-
-            <div class="result-screen">
-                <div class="res-timer">
-                    <div><span id="res-d">00</span><label>GÜN</label></div>
-                    <div><span id="res-h">00</span><label>SAAT</label></div>
-                    <div><span id="res-m">00</span><label>DAK</label></div>
-                    <div><span id="res-s">00</span><label>SN</label></div>
-                </div>
-                <div id="periyot-final">VERİ GİRİŞİ BEKLENİYOR</div>
-            </div>
-
-            <button class="btn-save" onclick="saveWaitRecord()">Sisteme Kaydet ve Listele</button>
-
-            <div class="wait-list-container">
-                <label style="color:var(--accent); margin-bottom: 10px; display:block; font-weight:800; font-size:0.7rem;">AKTİF BEKLEME LİSTESİ</label>
-                <table class="wait-table" id="wait-table">
-                    <thead>
-                        <tr>
-                            <th>PLAKA / REF</th>
-                            <th>MÜŞTERİ</th>
-                            <th>GEÇEN SÜRE</th>
-                            <th>BEKLEME</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
-            </div>
+            <div class="modal-header"><h2>SUNUCU DURUMU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div>
+            <ul class="info-list">
+                <li><span>Lokasyon:</span><span>Frankfurt / Cloud</span></li>
+                <li><span>Uptime:</span><span>%99.98</span></li>
+                <li><span>Node.js:</span><span>v20.x</span></li>
+                <li><span>Durum:</span><span style="color:#22c55e">ONLINE</span></li>
+            </ul>
         </div>
     </div>
 
-    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU DURUMU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt / Cloud</span></li><li><span>Uptime:</span><span>%99.98</span></li><li><span>CPU:</span><span>%4.2</span></li><li><span>Node.js:</span><span>v20.x</span></li></ul></div></div>
-    <div id="db-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>VERİTABANI</h2><span onclick="closeModal('db-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Motor:</span><span>SQLite 3</span></li><li><span>Yedekleme:</span><span>Günlük</span></li><li><span>Hız:</span><span>0.1ms</span></li></ul></div></div>
-    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>SHA-256 (Aktif)</span></li><li><span>WAF:</span><span>Arttırılmış Koruma</span></li><li><span>Şifreleme:</span><span>AES-GCM</span></li></ul></div></div>
-
-    <div id="sheets-overlay" class="sheets-overlay">
-        <div class="sheets-toolbar">
-            <h2><i class="fas fa-file-invoice"></i> EGE KALYON CANLI ÇİZELGE TERMİNALİ</h2>
-            <button class="btn-close-sheets" onclick="closeSheets()">Terminale Dön ✕</button>
+    <div id="db-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>VERİTABANI</h2><span onclick="closeModal('db-modal')" style="cursor:pointer">✕</span></div>
+            <ul class="info-list">
+                <li><span>Motor:</span><span>SQLite 3</span></li>
+                <li><span>Yedekleme:</span><span>Günlük Otomatik</span></li>
+                <li><span>Sorgu Hızı:</span><span>0.1ms</span></li>
+            </ul>
         </div>
-        <iframe src="https://docs.google.com/spreadsheets/d/1WaSNv0a2Nn-xDiHMX3VsLwYaOwTS5maCtrzRS9zUdlc/edit?rm=minimal" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+
+    <div id="firewall-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>GÜVENLİK TERMİNALİ</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div>
+            <ul class="info-list">
+                <li><span>SSL Sertifikası:</span><span>SHA-256 (Aktif)</span></li>
+                <li><span>Şifreleme:</span><span>AES-GCM-256</span></li>
+                <li><span>Koruma:</span><span>WAF Layer 7</span></li>
+            </ul>
+        </div>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
         
+        // CANLI SAAT MOTORU
         setInterval(() => {
             const now = new Date();
             document.getElementById('digital-clock').innerText = now.toLocaleTimeString('tr-TR');
             document.getElementById('digital-date').innerText = now.toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
         }, 1000);
 
+        // MODAL KONTROLLERİ
         function openModal(id) { document.getElementById(id).style.display = 'block'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function openSheets() { document.getElementById('sheets-overlay').style.display = 'flex'; }
-        function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; }
 
-        let activeWaitCount = 0;
+        // GOOGLE SHEETS ENTEGRASYONU
+        function openSheets(type) {
+            const overlay = document.getElementById('sheets-overlay');
+            const iframe = document.getElementById('sheets-iframe');
+            const title = document.getElementById('sheets-title');
 
-        function liveCalc() {
-            const inD = document.getElementById('in-d').value;
-            const inM = document.getElementById('in-m').value;
-            const inY = document.getElementById('in-y').value;
-            const inH = document.getElementById('in-h').value;
-            const inMin = document.getElementById('in-min').value;
-            const outD = document.getElementById('out-d').value;
-            const outM = document.getElementById('out-m').value;
-            const outY = document.getElementById('out-y').value;
-            const outH = document.getElementById('out-h').value;
-            const outMin = document.getElementById('out-min').value;
-
-            if(inD && inM && inY && inH && inMin) {
-                const start = new Date(inY, inM-1, inD, inH, inMin);
-                let end = new Date();
-                if(outD && outM && outY && outH && outMin) end = new Date(outY, outM-1, outD, outH, outMin);
-                
-                const diff = end - start;
-                if(diff > 0) {
-                    const d = Math.floor(diff / 86400000);
-                    const h = Math.floor((diff % 86400000) / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000);
-                    const s = Math.floor((diff % 60000) / 1000);
-
-                    document.getElementById('res-d').innerText = d.toString().padStart(2,'0');
-                    document.getElementById('res-h').innerText = h.toString().padStart(2,'0');
-                    document.getElementById('res-m').innerText = m.toString().padStart(2,'0');
-                    document.getElementById('res-s').innerText = s.toString().padStart(2,'0');
-
-                    activeWaitCount = Math.floor((diff / 3600000) / 6);
-                    const status = document.getElementById('periyot-final');
-                    status.innerText = activeWaitCount + " BEKLEME HESAPLANDI";
-                    status.style.background = activeWaitCount > 0 ? "var(--danger)" : "var(--warning)";
-                    status.style.color = activeWaitCount > 0 ? "#fff" : "#000";
-                    return { d, h, m, activeWaitCount };
-                }
+            if(type === 'cizelge') {
+                iframe.src = "https://docs.google.com/spreadsheets/d/1WaSNv0a2Nn-xDiHMX3VsLwYaOwTS5maCtrzRS9zUdlc/edit?rm=minimal";
+                title.innerHTML = '<i class="fas fa-table"></i> DİJİTAL ÇİZELGE EDİTÖRÜ';
+            } else if(type === 'bekleme') {
+                iframe.src = "https://docs.google.com/spreadsheets/d/1sCy68YJYkvFIpQumgP6_tt5mcBFgDm2WLIbvuVHCgIM/edit?rm=minimal";
+                title.innerHTML = '<i class="fas fa-clock"></i> BEKLEME TAKİBİ EDİTÖRÜ';
             }
-            return null;
+
+            overlay.style.display = 'flex';
         }
-        setInterval(liveCalc, 1000);
 
-        function saveWaitRecord() {
-            const data = liveCalc();
-            if(!data) { alert("Lütfen giriş tarihlerini eksiksiz doldurun!"); return; }
-
-            const musteri = document.getElementById('m-musteri').value || "-";
-            const ref = document.getElementById('m-ref').value || "-";
-            const plaka = document.getElementById('m-plaka').value || "-";
-            
-            const tableBody = document.querySelector('#wait-table tbody');
-            const row = tableBody.insertRow(0);
-            
-            row.innerHTML = `
-                <td><b style="color:#fff">${plaka}</b><br><small>${ref}</small></td>
-                <td>${musteri}</td>
-                <td>${data.d}G ${data.h}S ${data.m}D</td>
-                <td style="color:var(--danger); font-weight:900">${data.activeWaitCount}</td>
-            `;
-
-            alert("Kayıt başarıyla listeye eklendi!");
+        function closeSheets() {
+            document.getElementById('sheets-overlay').style.display = 'none';
+            document.getElementById('sheets-iframe').src = "";
         }
     </script>
 </body>
