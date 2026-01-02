@@ -5,21 +5,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V2.0</title>
+    <title>Ege Kalyon | Terminal V2.2</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
             --primary: #0071e3; --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08);
         }
 
-        body { background: radial-gradient(circle at top right, #0a1120, #050505); }
+        body { background: radial-gradient(circle at top right, #0a1120, #050505); overflow-x: hidden; }
         
         /* MODAL & OVERLAY */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); }
         .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 580px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
 
-        /* HESAPLAMA GRUPLARI (ESKİ STİL) */
+        /* GOOGLE SHEETS FULLSCREEN OVERLAY */
+        .sheets-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 4000; display: none; flex-direction: column;
+            animation: slideIn 0.5s ease;
+        }
+        .sheets-toolbar {
+            background: #111; padding: 15px 30px; display: flex;
+            justify-content: space-between; align-items: center; border-bottom: 1px solid #333;
+        }
+        .sheets-toolbar h2 { color: #fff; font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .btn-close-sheets { background: var(--danger); color: white; border: none; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+        /* HESAPLAMA GRUPLARI */
         .calc-group { background: var(--glass); padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .calc-group label { display: block; font-size: 0.7rem; color: #555; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; }
         .input-row { display: flex; gap: 8px; justify-content: center; }
@@ -30,7 +43,6 @@
         .res-timer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
         .res-timer div { background: #000; padding: 15px 0; border-radius: 15px; border: 1px solid #1a1a1a; text-align: center; }
         .res-timer span { display: block; font-size: 1.4rem; font-weight: 900; color: #fff; }
-        .res-timer label { font-size: 0.5rem; color: #444; font-weight: 800; }
         #periyot-final { background: var(--warning); color: #000; padding: 12px; border-radius: 50px; font-weight: 900; display: block; text-align: center; font-size: 0.9rem; }
 
         /* INFO LIST */
@@ -39,10 +51,11 @@
         .info-list li span:first-child { color: #555; font-weight: 700; }
         .info-list li span:last-child { color: var(--accent); font-weight: 900; font-family: monospace; }
 
-        /* KARTLAR */
         .status-pulse { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
         #digital-clock { font-size: 2.2rem; font-weight: 950; color: #fff; letter-spacing: -2px; }
         #digital-date { font-size: 0.8rem; color: var(--accent); font-weight: 800; letter-spacing: 3px; }
+
+        @keyframes slideIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
 <body class="admin-body">
@@ -50,7 +63,7 @@
         <div class="sidebar-title">EGE KALYON <span>PRO</span></div>
         <nav class="sidebar-nav">
             <a href="/admin" class="active"><i class="fas fa-terminal"></i> Dashboard</a>
-            <a href="/cizelge"><i class="fas fa-truck-fast"></i> Operasyon</a>
+            <a href="#" onclick="openSheets()"><i class="fas fa-table"></i> Çizelge Edit</a>
             <a href="/cikis" style="margin-top: 100px; color: var(--danger);"><i class="fas fa-power-off"></i> Çıkış</a>
         </nav>
     </aside>
@@ -59,7 +72,7 @@
         <header class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
             <div data-aos="fade-right">
                 <h1>Terminal <span class="highlight">Otoritesi</span></h1>
-                <p style="color: #444; margin-top: 5px;">Bağlantı katmanı aktif. Merhaba, <%= firma %></p>
+                <p style="color: #444; margin-top: 5px;">Canlı Veri Düzenleme Modu Aktif. <%= firma %></p>
             </div>
             <div style="text-align: right;" data-aos="fade-left">
                 <div id="digital-clock">00:00:00</div>
@@ -68,13 +81,13 @@
         </header>
 
         <section class="grid-cockpit-v2">
-            <div class="cyber-card" onclick="location.href='/cizelge'" style="cursor: pointer; border-color: var(--primary);" data-aos="fade-up">
-                <i class="fas fa-table-list" style="color: var(--primary) !important;"></i>
-                <div class="card-info"><h3>Dijital Çizelge Paneli</h3><p><%= isler.length %> Aktif Kayıt</p></div>
+            <div class="cyber-card" onclick="openSheets()" style="cursor: pointer; border-color: #4285F4;" data-aos="fade-up">
+                <div class="status-pulse"></div>
+                <i class="fas fa-file-excel" style="color: #4285F4 !important;"></i>
+                <div class="card-info"><h3>Dijital Çizelge (Canlı)</h3><p>E-Tabloyu Düzenle ve İzle</p></div>
             </div>
 
             <div class="cyber-card" onclick="openModal('bekleme-modal')" style="cursor: pointer; border-color: var(--warning);" data-aos="fade-up" data-aos-delay="100">
-                <div class="status-pulse"></div>
                 <i class="fas fa-stopwatch" style="color: var(--warning) !important;"></i>
                 <div class="card-info"><h3>Bekleme Takibi</h3><p>Hakediş Analiz Terminali</p></div>
             </div>
@@ -89,32 +102,34 @@
                 <div class="card-info"><h3>Luca Finans</h3><p>Muhasebe Portalı</p></div>
             </a>
 
-            <div class="cyber-card" data-aos="fade-up" data-aos-delay="400">
-                <i class="fas fa-file-invoice-dollar" style="color: #fbbf24 !important;"></i>
-                <div class="card-info"><h3>E-Fatura Sistemi</h3><p>Entegrasyon Hazır</p></div>
-            </div>
-
-            <div class="cyber-card" onclick="openModal('sunucu-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="500">
+            <div class="cyber-card" onclick="openModal('sunucu-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="400">
                 <i class="fas fa-server" style="color: #3b82f6 !important;"></i>
                 <div class="card-info"><h3>Sunucu Yönetimi</h3><p>Sistem Bilgileri</p></div>
             </div>
 
-            <div class="cyber-card" onclick="openModal('db-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="600">
+            <div class="cyber-card" onclick="openModal('db-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="500">
                 <i class="fas fa-database" style="color: #a855f7 !important;"></i>
                 <div class="card-info"><h3>Veritabanı Durumu</h3><p>SQLite Bilgi Paneli</p></div>
             </div>
 
-            <div class="cyber-card" onclick="openModal('firewall-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="700">
+            <div class="cyber-card" onclick="openModal('firewall-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="600">
                 <i class="fas fa-shield-halved" style="color: #22c55e !important;"></i>
                 <div class="card-info"><h3>Güvenlik Duvarı</h3><p>SSL & Şifreleme</p></div>
             </div>
         </section>
     </main>
 
+    <div id="sheets-overlay" class="sheets-overlay">
+        <div class="sheets-toolbar">
+            <h2><i class="fas fa-file-invoice"></i> EGE KALYON CANLI ÇİZELGE TERMİNALİ</h2>
+            <button class="btn-close-sheets" onclick="closeSheets()">Terminale Dön ✕</button>
+        </div>
+        <iframe src="https://docs.google.com/spreadsheets/d/1WaSNv0a2Nn-xDiHMX3VsLwYaOwTS5maCtrzRS9zUdlc/edit?rm=minimal" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+
     <div id="bekleme-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2><i class="fas fa-clock"></i> BEKLEME TERMİNALİ</h2><span onclick="closeModal('bekleme-modal')" style="cursor:pointer">✕</span></div>
-            
             <div class="calc-group">
                 <label>GİRİŞ (GG / AA / YYYY / SS:DK)</label>
                 <div class="input-row">
@@ -125,7 +140,6 @@
                     <input type="number" id="in-min" placeholder="DK" oninput="liveCalc()">
                 </div>
             </div>
-
             <div class="calc-group">
                 <label style="color: var(--accent);">ÇIKIŞ (BOŞSA "ŞİMDİ")</label>
                 <div class="input-row">
@@ -136,7 +150,6 @@
                     <input type="number" id="out-min" placeholder="DK" oninput="liveCalc()">
                 </div>
             </div>
-
             <div class="result-screen">
                 <div class="res-timer">
                     <div><span id="res-d">00</span><label>GÜN</label></div>
@@ -149,9 +162,9 @@
         </div>
     </div>
 
-    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU DURUMU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt / Cloud</span></li><li><span>Uptime:</span><span>%99.98</span></li><li><span>CPU:</span><span>%4.2</span></li><li><span>Node.js:</span><span>v20.x</span></li></ul></div></div>
-    <div id="db-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>VERİTABANI</h2><span onclick="closeModal('db-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Motor:</span><span>SQLite 3</span></li><li><span>Yedekleme:</span><span>Günlük / Bulut</span></li><li><span>Hız:</span><span>0.1ms (Query)</span></li></ul></div></div>
-    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>SHA-256 (Aktif)</span></li><li><span>WAF:</span><span>Arttırılmış Koruma</span></li><li><span>Şifreleme:</span><span>AES-GCM</span></li></ul></div></div>
+    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU DURUMU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt / Cloud</span></li><li><span>Uptime:</span><span>%99.98</span></li><li><span>Node.js:</span><span>v20.x</span></li></ul></div></div>
+    <div id="db-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>VERİTABANI</h2><span onclick="closeModal('db-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Motor:</span><span>SQLite 3</span></li><li><span>Yedekleme:</span><span>Günlük</span></li></ul></div></div>
+    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>SHA-256 (Aktif)</span></li><li><span>Şifreleme:</span><span>AES-GCM</span></li></ul></div></div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -164,6 +177,9 @@
 
         function openModal(id) { document.getElementById(id).style.display = 'block'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function openSheets() { document.getElementById('sheets-overlay').style.display = 'flex'; }
+        function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; }
 
         function liveCalc() {
             const inD = document.getElementById('in-d').value;
@@ -171,7 +187,6 @@
             const inY = document.getElementById('in-y').value;
             const inH = document.getElementById('in-h').value;
             const inMin = document.getElementById('in-min').value;
-
             const outD = document.getElementById('out-d').value;
             const outM = document.getElementById('out-m').value;
             const outY = document.getElementById('out-y').value;
@@ -182,7 +197,6 @@
                 const start = new Date(inY, inM-1, inD, inH, inMin);
                 let end = new Date();
                 if(outD && outM && outY && outH && outMin) end = new Date(outY, outM-1, outD, outH, outMin);
-                
                 const diff = end - start;
                 if(diff > 0) {
                     document.getElementById('res-d').innerText = Math.floor(diff / 86400000).toString().padStart(2,'0');
@@ -193,7 +207,6 @@
                     const status = document.getElementById('periyot-final');
                     status.innerText = wait + " BEKLEME HESAPLANDI";
                     status.style.background = wait > 0 ? "var(--danger)" : "var(--warning)";
-                    status.style.color = wait > 0 ? "#fff" : "#000";
                 }
             }
         }
