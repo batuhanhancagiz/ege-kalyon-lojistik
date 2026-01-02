@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V2.7</title>
+    <title>Ege Kalyon | Terminal V2.9</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
@@ -17,10 +17,27 @@
         
         /* MODAL & OVERLAY SİSTEMİ */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); overflow-y: auto; }
-        .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 580px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
+        .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 800px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
 
-        /* FULLSCREEN OVERLAYS (Sheets & Petrol) */
+        /* ŞOFÖR FORMU */
+        .driver-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 0.65rem; color: #555; font-weight: 800; text-transform: uppercase; }
+        .form-group input { background: #000 !important; border: 1px solid #222 !important; color: #fff !important; padding: 10px; border-radius: 8px; font-size: 0.85rem; }
+        .btn-add-driver { grid-column: 1 / -1; background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .btn-add-driver:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        /* ŞOFÖR LİSTESİ */
+        .driver-list-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.8rem; }
+        .driver-list-table th { text-align: left; color: #444; padding: 12px; border-bottom: 1px solid #222; }
+        .driver-list-table td { padding: 12px; border-bottom: 1px solid #111; color: #aaa; }
+        .doc-badge { padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
+        .doc-ok { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+        .doc-warn { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .btn-del { color: var(--danger); cursor: pointer; border: none; background: none; font-size: 1rem; }
+
+        /* FULLSCREEN OVERLAYS */
         .sheets-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; display: none; flex-direction: column; animation: slideIn 0.5s ease; }
         .sheets-toolbar { background: #111; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
         .btn-close-sheets { background: var(--danger); color: white; border: none; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; }
@@ -30,8 +47,7 @@
         .info-list li { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #111; font-size: 0.9rem; }
         .info-list li span:first-child { color: #555; font-weight: 700; }
         .info-list li span:last-child { color: var(--accent); font-weight: 900; font-family: monospace; }
-        
-        #note-area { background: #000; color: var(--warning); border: 1px solid #222; width: 100%; height: 200px; padding: 15px; border-radius: 15px; font-family: inherit; resize: none; }
+        #note-area { background: #000; color: var(--warning); border: 1px solid #222; width: 100%; height: 200px; padding: 15px; border-radius: 15px; resize: none; font-size: 1rem; }
 
         .status-pulse { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
         #digital-clock { font-size: 2.2rem; font-weight: 950; color: #fff; letter-spacing: -2px; }
@@ -47,6 +63,7 @@
             <a href="/admin" class="active"><i class="fas fa-terminal"></i> Dashboard</a>
             <a href="#" onclick="openSheets('cizelge')"><i class="fas fa-table"></i> Çizelge Edit</a>
             <a href="#" onclick="openSheets('bekleme')"><i class="fas fa-clock"></i> Bekleme Edit</a>
+            <a href="#" onclick="openModal('driver-modal')"><i class="fas fa-user-group"></i> Şoför Paneli</a>
             <a href="#" onclick="openModal('note-modal')"><i class="fas fa-sticky-note"></i> Hızlı Notlar</a>
             <a href="#" onclick="openModal('log-modal')"><i class="fas fa-box-archive"></i> Sistem Logları</a>
             <a href="/cikis" style="margin-top: 50px; color: var(--danger);"><i class="fas fa-power-off"></i> Çıkış</a>
@@ -57,7 +74,7 @@
         <header class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
             <div data-aos="fade-right">
                 <h1>Terminal <span class="highlight">Otoritesi</span></h1>
-                <p style="color: #444; margin-top: 5px;">Komuta Merkezi Aktif. Merhaba, <%= firma %></p>
+                <p style="color: #444; margin-top: 5px;">Bağlantı Kanalları Güvenli. <%= firma %></p>
             </div>
             <div style="text-align: right;" data-aos="fade-left">
                 <div id="digital-clock">00:00:00</div>
@@ -87,14 +104,14 @@
                 <div class="card-info"><h3>Luca Finans</h3><p>Muhasebe Portalı</p></div>
             </a>
 
-            <div class="cyber-card" onclick="openSheets('petrol')" style="cursor: pointer; border-color: var(--petrol);" data-aos="fade-up" data-aos-delay="200">
+            <a href="https://www.petrolofisi.com.tr/akaryakit-fiyatlari" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--petrol);" data-aos="fade-up" data-aos-delay="200">
                 <i class="fas fa-gas-pump" style="color: var(--petrol) !important;"></i>
-                <div class="card-info"><h3>Akaryakıt Fiyatları</h3><p>Petrol Ofisi Güncel</p></div>
-            </div>
+                <div class="card-info"><h3>Akaryakıt Fiyatları</h3><p>Petrol Ofisi Canlı</p></div>
+            </a>
 
             <div class="cyber-card" onclick="openModal('driver-modal')" style="cursor: pointer; border-color: #a855f7;" data-aos="fade-up" data-aos-delay="250">
                 <i class="fas fa-user-tie" style="color: #a855f7 !important;"></i>
-                <div class="card-info"><h3>Şoför Rehberi</h3><p>Personel & Belge Takibi</p></div>
+                <div class="card-info"><h3>Şoför Yönetimi</h3><p>Evrak & Personel Paneli</p></div>
             </div>
 
             <div class="cyber-card" onclick="openModal('log-modal')" style="cursor: pointer; border-color: #64748b;" data-aos="fade-up" data-aos-delay="300">
@@ -119,19 +136,53 @@
         </section>
     </main>
 
-    <div id="sheets-overlay" class="sheets-overlay">
-        <div class="sheets-toolbar">
-            <h2 id="sheets-title">TERMİNAL</h2>
-            <button class="btn-close-sheets" onclick="closeSheets()">Terminale Dön ✕</button>
+    <div id="driver-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-users-gear"></i> ŞOFÖR VE EVRAK YÖNETİMİ</h2>
+                <span onclick="closeModal('driver-modal')" style="cursor:pointer">✕</span>
+            </div>
+            
+            <div class="driver-form">
+                <div class="form-group"><label>Şoför Ad Soyad</label><input type="text" id="d-name" placeholder="Ad Soyad"></div>
+                <div class="form-group"><label>TC Kimlik No</label><input type="number" id="d-tc" placeholder="11 Haneli"></div>
+                <div class="form-group"><label>Telefon</label><input type="text" id="d-phone" placeholder="05xx xxx xx xx"></div>
+                <div class="form-group"><label>Sabit Plaka</label><input type="text" id="d-plate" placeholder="35 ABC 123"></div>
+                <div class="form-group"><label>Ehliyet Sınıfı</label><input type="text" id="d-license" placeholder="CE / D"></div>
+                <div class="form-group"><label>SRC Belgesi (Vade)</label><input type="date" id="d-src"></div>
+                <div class="form-group"><label>Psikoteknik (Vade)</label><input type="date" id="d-psiko"></div>
+                <div class="form-group"><label>Dijital Takograf</label><input type="date" id="d-tako"></div>
+                <button class="btn-add-driver" onclick="addDriver()">Yeni Şoför Kaydet</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="driver-list-table" id="driver-table">
+                    <thead>
+                        <tr>
+                            <th>ŞOFÖR / PLAKA</th>
+                            <th>İLETİŞİM</th>
+                            <th>SRC</th>
+                            <th>PSİKO</th>
+                            <th>TAKO</th>
+                            <th>İŞLEM</th>
+                        </tr>
+                    </thead>
+                    <tbody id="driver-tbody">
+                        </tbody>
+                </table>
+            </div>
         </div>
+    </div>
+
+    <div id="sheets-overlay" class="sheets-overlay">
+        <div class="sheets-toolbar"><h2 id="sheets-title">TERMİNAL</h2><button class="btn-close-sheets" onclick="closeSheets()">Terminale Dön ✕</button></div>
         <iframe id="sheets-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 
     <div id="note-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2><i class="fas fa-edit"></i> AKILLI NOTLAR</h2><span onclick="closeModal('note-modal')" style="cursor:pointer">✕</span></div>
-            <textarea id="note-area" placeholder="Notlarınızı buraya yazın, otomatik kaydedilir..."></textarea>
-            <p style="font-size:0.7rem; color:#444; margin-top:10px;">* Bu notlar sadece bu cihazda saklanır.</p>
+            <textarea id="note-area" placeholder="Notlarınızı buraya yazın..."></textarea>
         </div>
     </div>
 
@@ -139,81 +190,103 @@
         <div class="modal-content">
             <div class="modal-header"><h2><i class="fas fa-history"></i> SİSTEM HAREKETLERİ</h2><span onclick="closeModal('log-modal')" style="cursor:pointer">✕</span></div>
             <ul class="info-list">
-                <li><span>Oturum Açıldı:</span><span id="log-time">Az Önce</span></li>
-                <li><span>Veritabanı:</span><span>Bağlantı Kuruldu</span></li>
-                <li><span>Güvenlik Katmanı:</span><span>AES-256 Aktif</span></li>
-                <li><span>IP Adresi:</span><span>Gizli (SSL)</span></li>
+                <li><span>Durum:</span><span style="color:#22c55e">GÜVENLİ</span></li>
+                <li><span>SQLite:</span><span>Bağlı</span></li>
+                <li><span>Last Sync:</span><span id="log-time">...</span></li>
             </ul>
         </div>
     </div>
 
-    <div id="driver-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2><i class="fas fa-id-card"></i> PERSONEL REHBERİ</h2><span onclick="closeModal('driver-modal')" style="cursor:pointer">✕</span></div>
-            <ul class="info-list">
-                <li><span>Kayıtlı Şoför:</span><span>14 Aktif</span></li>
-                <li><span>Belge Uyarısı:</span><span style="color:var(--danger)">2 Kişi (Vadesi Geçen)</span></li>
-                <li><span>Son Güncelleme:</span><span>Bugün 09:00</span></li>
-            </ul>
-            <p style="color:#555; font-size:0.8rem; text-align:center; margin-top:20px;">Personel detayları E-Tablo üzerinden yönetilmektedir.</p>
-        </div>
-    </div>
-
-    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt</span></li><li><span>Durum:</span><span>ONLINE</span></li></ul></div></div>
-    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>Aktif</span></li><li><span>Şifreleme:</span><span>AES-GCM</span></li></ul></div></div>
+    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt</span></li><li><span>Durum:</span><span style="color:#22c55e">ONLINE</span></li></ul></div></div>
+    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>Aktif</span></li></ul></div></div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
         
-        // CANLI SAAT
         setInterval(() => {
             const now = new Date();
             document.getElementById('digital-clock').innerText = now.toLocaleTimeString('tr-TR');
             document.getElementById('digital-date').innerText = now.toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
         }, 1000);
 
-        // MODAL KONTROLLERİ
-        function openModal(id) { 
-            document.getElementById(id).style.display = 'block'; 
-            // Log kaydı simülasyonu
-            console.log(id + " modülü açıldı.");
-        }
+        function openModal(id) { document.getElementById(id).style.display = 'block'; if(id==='driver-modal') renderDrivers(); }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // DİNAMİK OVERLAY (SHEETS & PETROL)
         function openSheets(type) {
             const overlay = document.getElementById('sheets-overlay');
             const iframe = document.getElementById('sheets-iframe');
             const title = document.getElementById('sheets-title');
-
             if(type === 'cizelge') {
                 iframe.src = "https://docs.google.com/spreadsheets/d/1WaSNv0a2Nn-xDiHMX3VsLwYaOwTS5maCtrzRS9zUdlc/edit?rm=minimal";
-                title.innerHTML = '<i class="fas fa-table"></i> DİJİTAL ÇİZELGE EDİTÖRÜ';
+                title.innerHTML = '<i class="fas fa-table"></i> ÇİZELGE EDİTÖRÜ';
             } else if(type === 'bekleme') {
                 iframe.src = "https://docs.google.com/spreadsheets/d/1sCy68YJYkvFIpQumgP6_tt5mcBFgDm2WLIbvuVHCgIM/edit?rm=minimal";
-                title.innerHTML = '<i class="fas fa-clock"></i> BEKLEME TAKİBİ EDİTÖRÜ';
-            } else if(type === 'petrol') {
-                iframe.src = "https://www.petrolofisi.com.tr/akaryakit-fiyatlari";
-                title.innerHTML = '<i class="fas fa-gas-pump"></i> CANLI AKARYAKIT FİYATLARI';
+                title.innerHTML = '<i class="fas fa-clock"></i> BEKLEME EDİTÖRÜ';
             }
-
             overlay.style.display = 'flex';
         }
+        function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; document.getElementById('sheets-iframe').src = ""; }
 
-        function closeSheets() {
-            document.getElementById('sheets-overlay').style.display = 'none';
-            document.getElementById('sheets-iframe').src = "";
+        // --- ŞOFÖR YÖNETİM SİSTEMİ ---
+        function getDrivers() { return JSON.parse(localStorage.getItem('drivers') || '[]'); }
+        function saveDrivers(drivers) { localStorage.setItem('drivers', JSON.stringify(drivers)); }
+
+        function addDriver() {
+            const name = document.getElementById('d-name').value;
+            const tc = document.getElementById('d-tc').value;
+            const phone = document.getElementById('d-phone').value;
+            const plate = document.getElementById('d-plate').value;
+            const src = document.getElementById('d-src').value;
+            const psiko = document.getElementById('d-psiko').value;
+            const tako = document.getElementById('d-tako').value;
+
+            if(!name || !plate) { alert("Ad ve Plaka zorunludur!"); return; }
+
+            const drivers = getDrivers();
+            drivers.push({ id: Date.now(), name, tc, phone, plate, src, psiko, tako });
+            saveDrivers(drivers);
+            renderDrivers();
+            
+            // Formu temizle
+            document.querySelectorAll('.driver-form input').forEach(i => i.value = "");
         }
 
-        // AKILLI NOT KAYDETME
+        function deleteDriver(id) {
+            let drivers = getDrivers();
+            drivers = drivers.filter(d => d.id !== id);
+            saveDrivers(drivers);
+            renderDrivers();
+        }
+
+        function renderDrivers() {
+            const drivers = getDrivers();
+            const tbody = document.getElementById('driver-tbody');
+            tbody.innerHTML = "";
+            const today = new Date();
+
+            drivers.forEach(d => {
+                const srcStatus = d.src && new Date(d.src) < today ? 'doc-warn' : 'doc-ok';
+                const psikoStatus = d.psiko && new Date(d.psiko) < today ? 'doc-warn' : 'doc-ok';
+                const takoStatus = d.tako && new Date(d.tako) < today ? 'doc-warn' : 'doc-ok';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${d.name}</b><br><small>${d.plate}</small></td>
+                        <td>${d.phone || '-'}</td>
+                        <td><span class="doc-badge ${srcStatus}">${d.src ? d.src : 'Yok'}</span></td>
+                        <td><span class="doc-badge ${psikoStatus}">${d.psiko ? d.psiko : 'Yok'}</span></td>
+                        <td><span class="doc-badge ${takoStatus}">${d.tako ? d.tako : 'Yok'}</span></td>
+                        <td><button class="btn-del" onclick="deleteDriver(${d.id})"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // AKILLI NOT SİSTEMİ
         const noteArea = document.getElementById('note-area');
         noteArea.value = localStorage.getItem('terminal_notes') || "";
-        noteArea.addEventListener('input', () => {
-            localStorage.setItem('terminal_notes', noteArea.value);
-        });
-
-        // LOG ZAMANI
+        noteArea.addEventListener('input', () => { localStorage.setItem('terminal_notes', noteArea.value); });
         document.getElementById('log-time').innerText = new Date().toLocaleTimeString();
     </script>
 </body>
