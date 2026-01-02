@@ -5,11 +5,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V2.5</title>
+    <title>Ege Kalyon | Terminal V2.6</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
             --primary: #0071e3; --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08);
+            --whatsapp: #25D366; --outlook: #0078d4;
         }
 
         body { background: radial-gradient(circle at top right, #0a1120, #050505); overflow-x: hidden; }
@@ -60,7 +61,7 @@
         <header class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
             <div data-aos="fade-right">
                 <h1>Terminal <span class="highlight">Otoritesi</span></h1>
-                <p style="color: #444; margin-top: 5px;">Canlı Veri Senkronizasyonu Aktif. <%= firma %></p>
+                <p style="color: #444; margin-top: 5px;">İletişim ve Veri Kanalları Aktif. <%= firma %></p>
             </div>
             <div style="text-align: right;" data-aos="fade-left">
                 <div id="digital-clock">00:00:00</div>
@@ -90,7 +91,17 @@
                 <div class="card-info"><h3>Luca Finans</h3><p>Muhasebe Portalı</p></div>
             </a>
 
-            <div class="cyber-card" onclick="openModal('sunucu-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="400">
+            <a href="https://web.whatsapp.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--whatsapp);" data-aos="fade-up" data-aos-delay="350">
+                <i class="fab fa-whatsapp" style="color: var(--whatsapp) !important;"></i>
+                <div class="card-info"><h3>Kurumsal WhatsApp</h3><p>Hızlı İletişim Hattı</p></div>
+            </a>
+
+            <a href="https://outlook.live.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--outlook);" data-aos="fade-up" data-aos-delay="400">
+                <i class="fas fa-envelope-open-text" style="color: var(--outlook) !important;"></i>
+                <div class="card-info"><h3>Kurumsal Mail</h3><p>Outlook Servisleri</p></div>
+            </a>
+
+            <div class="cyber-card" onclick="openModal('sunucu-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="450">
                 <i class="fas fa-server" style="color: #3b82f6 !important;"></i>
                 <div class="card-info"><h3>Sunucu Yönetimi</h3><p>Sistem Bilgileri</p></div>
             </div>
@@ -100,7 +111,7 @@
                 <div class="card-info"><h3>Veritabanı Durumu</h3><p>SQLite Bilgi Paneli</p></div>
             </div>
 
-            <div class="cyber-card" onclick="openModal('firewall-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="600">
+            <div class="cyber-card" onclick="openModal('firewall-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="550">
                 <i class="fas fa-shield-halved" style="color: #22c55e !important;"></i>
                 <div class="card-info"><h3>Güvenlik Duvarı</h3><p>SSL & Şifreleme</p></div>
             </div>
