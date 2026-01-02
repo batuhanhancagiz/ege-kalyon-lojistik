@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V2.3</title>
+    <title>Ege Kalyon | Terminal V2.4</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
@@ -37,7 +37,8 @@
         .result-screen { background: #000; padding: 20px; border-radius: 20px; border: 1px solid #222; text-align: center; margin-bottom: 20px; }
         .res-timer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
         .res-timer div { background: #111; padding: 10px 0; border-radius: 10px; }
-        #periyot-final { background: var(--warning); color: #000; padding: 10px; border-radius: 50px; font-weight: 900; display: block; margin-bottom: 15px; }
+        .res-timer span { display: block; font-size: 1.4rem; font-weight: 900; color: #fff; }
+        #periyot-final { background: var(--warning); color: #000; padding: 12px; border-radius: 50px; font-weight: 900; display: block; margin-bottom: 15px; font-size: 0.9rem; }
         
         .btn-save { background: var(--accent); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: 900; width: 100%; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
         .btn-save:hover { transform: scale(1.02); filter: brightness(1.1); }
@@ -47,7 +48,12 @@
         .wait-table th { text-align: left; color: #555; padding: 10px; border-bottom: 1px solid #222; }
         .wait-table td { padding: 10px; border-bottom: 1px solid #111; }
 
-        /* DİĞER STİLLER */
+        /* SİSTEM MODAL STİLLERİ */
+        .info-list { list-style: none; padding: 0; }
+        .info-list li { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #111; font-size: 0.9rem; }
+        .info-list li span:first-child { color: #555; font-weight: 700; }
+        .info-list li span:last-child { color: var(--accent); font-weight: 900; font-family: monospace; }
+
         .sheets-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; display: none; flex-direction: column; }
         .sheets-toolbar { background: #111; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
         .status-pulse { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
@@ -98,6 +104,21 @@
                 <i class="fas fa-calculator" style="color: var(--accent) !important;"></i>
                 <div class="card-info"><h3>Luca Finans</h3><p>Muhasebe Portalı</p></div>
             </a>
+
+            <div class="cyber-card" onclick="openModal('sunucu-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="400">
+                <i class="fas fa-server" style="color: #3b82f6 !important;"></i>
+                <div class="card-info"><h3>Sunucu Yönetimi</h3><p>Sistem Bilgileri</p></div>
+            </div>
+
+            <div class="cyber-card" onclick="openModal('db-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="500">
+                <i class="fas fa-database" style="color: #a855f7 !important;"></i>
+                <div class="card-info"><h3>Veritabanı Durumu</h3><p>SQLite Bilgi Paneli</p></div>
+            </div>
+
+            <div class="cyber-card" onclick="openModal('firewall-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="600">
+                <i class="fas fa-shield-halved" style="color: #22c55e !important;"></i>
+                <div class="card-info"><h3>Güvenlik Duvarı</h3><p>SSL & Şifreleme</p></div>
+            </div>
         </section>
     </main>
 
@@ -119,22 +140,22 @@
             <div class="calc-group">
                 <label>GİRİŞ (GG / AA / YYYY / SS:DK)</label>
                 <div class="input-row">
-                    <input type="number" id="in-d" placeholder="GG">
-                    <input type="number" id="in-m" placeholder="AA">
-                    <input type="number" id="in-y" class="year-input" placeholder="YYYY">
-                    <input type="number" id="in-h" placeholder="SS">
-                    <input type="number" id="in-min" placeholder="DK">
+                    <input type="number" id="in-d" placeholder="GG" oninput="liveCalc()">
+                    <input type="number" id="in-m" placeholder="AA" oninput="liveCalc()">
+                    <input type="number" id="in-y" class="year-input" placeholder="YYYY" oninput="liveCalc()">
+                    <input type="number" id="in-h" placeholder="SS" oninput="liveCalc()">
+                    <input type="number" id="in-min" placeholder="DK" oninput="liveCalc()">
                 </div>
             </div>
 
             <div class="calc-group">
                 <label style="color: var(--accent);">ÇIKIŞ (BOŞSA "ŞİMDİ")</label>
                 <div class="input-row">
-                    <input type="number" id="out-d" placeholder="GG">
-                    <input type="number" id="out-m" placeholder="AA">
-                    <input type="number" id="out-y" class="year-input" placeholder="YYYY">
-                    <input type="number" id="out-h" placeholder="SS">
-                    <input type="number" id="out-min" placeholder="DK">
+                    <input type="number" id="out-d" placeholder="GG" oninput="liveCalc()">
+                    <input type="number" id="out-m" placeholder="AA" oninput="liveCalc()">
+                    <input type="number" id="out-y" class="year-input" placeholder="YYYY" oninput="liveCalc()">
+                    <input type="number" id="out-h" placeholder="SS" oninput="liveCalc()">
+                    <input type="number" id="out-min" placeholder="DK" oninput="liveCalc()">
                 </div>
             </div>
 
@@ -145,20 +166,20 @@
                     <div><span id="res-m">00</span><label>DAK</label></div>
                     <div><span id="res-s">00</span><label>SN</label></div>
                 </div>
-                <div id="periyot-final">HESAPLANMADI</div>
+                <div id="periyot-final">VERİ GİRİŞİ BEKLENİYOR</div>
             </div>
 
             <button class="btn-save" onclick="saveWaitRecord()">Sisteme Kaydet ve Listele</button>
 
             <div class="wait-list-container">
-                <label class="label-mini" style="color:var(--accent); margin-bottom: 10px; display:block">Aktif Bekleme Listesi</label>
-                <table class="wait-table" id="wait-table-body">
+                <label style="color:var(--accent); margin-bottom: 10px; display:block; font-weight:800; font-size:0.7rem;">AKTİF BEKLEME LİSTESİ</label>
+                <table class="wait-table" id="wait-table">
                     <thead>
                         <tr>
                             <th>PLAKA / REF</th>
                             <th>MÜŞTERİ</th>
-                            <th>SÜRE</th>
-                            <th>ADET</th>
+                            <th>GEÇEN SÜRE</th>
+                            <th>BEKLEME</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -168,10 +189,14 @@
         </div>
     </div>
 
+    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU DURUMU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt / Cloud</span></li><li><span>Uptime:</span><span>%99.98</span></li><li><span>CPU:</span><span>%4.2</span></li><li><span>Node.js:</span><span>v20.x</span></li></ul></div></div>
+    <div id="db-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>VERİTABANI</h2><span onclick="closeModal('db-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Motor:</span><span>SQLite 3</span></li><li><span>Yedekleme:</span><span>Günlük</span></li><li><span>Hız:</span><span>0.1ms</span></li></ul></div></div>
+    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>SHA-256 (Aktif)</span></li><li><span>WAF:</span><span>Arttırılmış Koruma</span></li><li><span>Şifreleme:</span><span>AES-GCM</span></li></ul></div></div>
+
     <div id="sheets-overlay" class="sheets-overlay">
         <div class="sheets-toolbar">
             <h2><i class="fas fa-file-invoice"></i> EGE KALYON CANLI ÇİZELGE TERMİNALİ</h2>
-            <button onclick="closeSheets()" style="background:var(--danger); color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer">Kapat</button>
+            <button class="btn-close-sheets" onclick="closeSheets()">Terminale Dön ✕</button>
         </div>
         <iframe src="https://docs.google.com/spreadsheets/d/1WaSNv0a2Nn-xDiHMX3VsLwYaOwTS5maCtrzRS9zUdlc/edit?rm=minimal" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
@@ -180,7 +205,6 @@
     <script>
         AOS.init();
         
-        // SAAT
         setInterval(() => {
             const now = new Date();
             document.getElementById('digital-clock').innerText = now.toLocaleTimeString('tr-TR');
@@ -192,7 +216,7 @@
         function openSheets() { document.getElementById('sheets-overlay').style.display = 'flex'; }
         function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; }
 
-        let currentWaitCount = 0;
+        let activeWaitCount = 0;
 
         function liveCalc() {
             const inD = document.getElementById('in-d').value;
@@ -223,11 +247,12 @@
                     document.getElementById('res-m').innerText = m.toString().padStart(2,'0');
                     document.getElementById('res-s').innerText = s.toString().padStart(2,'0');
 
-                    currentWaitCount = Math.floor((diff / 3600000) / 6);
+                    activeWaitCount = Math.floor((diff / 3600000) / 6);
                     const status = document.getElementById('periyot-final');
-                    status.innerText = currentWaitCount + " BEKLEME HESAPLANDI";
-                    status.style.background = currentWaitCount > 0 ? "var(--danger)" : "var(--warning)";
-                    return { d, h, m, currentWaitCount };
+                    status.innerText = activeWaitCount + " BEKLEME HESAPLANDI";
+                    status.style.background = activeWaitCount > 0 ? "var(--danger)" : "var(--warning)";
+                    status.style.color = activeWaitCount > 0 ? "#fff" : "#000";
+                    return { d, h, m, activeWaitCount };
                 }
             }
             return null;
@@ -235,25 +260,24 @@
         setInterval(liveCalc, 1000);
 
         function saveWaitRecord() {
-            const res = liveCalc();
-            if(!res) { alert("Önce tarih bilgilerini giriniz!"); return; }
+            const data = liveCalc();
+            if(!data) { alert("Lütfen giriş tarihlerini eksiksiz doldurun!"); return; }
 
             const musteri = document.getElementById('m-musteri').value || "-";
             const ref = document.getElementById('m-ref').value || "-";
             const plaka = document.getElementById('m-plaka').value || "-";
             
-            const table = document.getElementById('wait-table-body').getElementsByTagName('tbody')[0];
-            const newRow = table.insertRow(0);
+            const tableBody = document.querySelector('#wait-table tbody');
+            const row = tableBody.insertRow(0);
             
-            newRow.innerHTML = `
-                <td><b>${plaka}</b><br><small>${ref}</small></td>
+            row.innerHTML = `
+                <td><b style="color:#fff">${plaka}</b><br><small>${ref}</small></td>
                 <td>${musteri}</td>
-                <td>${res.d}G ${res.h}S ${res.m}D</td>
-                <td style="color:var(--danger); font-weight:900">${res.currentWaitCount}</td>
+                <td>${data.d}G ${data.h}S ${data.m}D</td>
+                <td style="color:var(--danger); font-weight:900">${data.activeWaitCount}</td>
             `;
 
-            // Formu temizle isteğe bağlı
-            alert("Kayıt Listeye Eklendi!");
+            alert("Kayıt başarıyla listeye eklendi!");
         }
     </script>
 </body>
