@@ -5,12 +5,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V2.6</title>
+    <title>Ege Kalyon | Terminal V2.7</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
             --primary: #0071e3; --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08);
-            --whatsapp: #25D366; --outlook: #0078d4;
+            --whatsapp: #25D366; --outlook: #0078d4; --petrol: #e21e26;
         }
 
         body { background: radial-gradient(circle at top right, #0a1120, #050505); overflow-x: hidden; }
@@ -20,24 +20,18 @@
         .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 580px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
 
-        /* GOOGLE SHEETS FULLSCREEN OVERLAYS */
-        .sheets-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 4000; display: none; flex-direction: column;
-            animation: slideIn 0.5s ease;
-        }
-        .sheets-toolbar {
-            background: #111; padding: 15px 30px; display: flex;
-            justify-content: space-between; align-items: center; border-bottom: 1px solid #333;
-        }
-        .sheets-toolbar h2 { color: #fff; font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        /* FULLSCREEN OVERLAYS (Sheets & Petrol) */
+        .sheets-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; display: none; flex-direction: column; animation: slideIn 0.5s ease; }
+        .sheets-toolbar { background: #111; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
         .btn-close-sheets { background: var(--danger); color: white; border: none; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; }
 
-        /* INFO LIST (SİSTEM KUTULARI İÇİN) */
+        /* INFO LIST & NOTE AREA */
         .info-list { list-style: none; padding: 0; }
         .info-list li { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #111; font-size: 0.9rem; }
         .info-list li span:first-child { color: #555; font-weight: 700; }
         .info-list li span:last-child { color: var(--accent); font-weight: 900; font-family: monospace; }
+        
+        #note-area { background: #000; color: var(--warning); border: 1px solid #222; width: 100%; height: 200px; padding: 15px; border-radius: 15px; font-family: inherit; resize: none; }
 
         .status-pulse { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
         #digital-clock { font-size: 2.2rem; font-weight: 950; color: #fff; letter-spacing: -2px; }
@@ -53,7 +47,9 @@
             <a href="/admin" class="active"><i class="fas fa-terminal"></i> Dashboard</a>
             <a href="#" onclick="openSheets('cizelge')"><i class="fas fa-table"></i> Çizelge Edit</a>
             <a href="#" onclick="openSheets('bekleme')"><i class="fas fa-clock"></i> Bekleme Edit</a>
-            <a href="/cikis" style="margin-top: 100px; color: var(--danger);"><i class="fas fa-power-off"></i> Çıkış</a>
+            <a href="#" onclick="openModal('note-modal')"><i class="fas fa-sticky-note"></i> Hızlı Notlar</a>
+            <a href="#" onclick="openModal('log-modal')"><i class="fas fa-box-archive"></i> Sistem Logları</a>
+            <a href="/cikis" style="margin-top: 50px; color: var(--danger);"><i class="fas fa-power-off"></i> Çıkış</a>
         </nav>
     </aside>
 
@@ -61,7 +57,7 @@
         <header class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
             <div data-aos="fade-right">
                 <h1>Terminal <span class="highlight">Otoritesi</span></h1>
-                <p style="color: #444; margin-top: 5px;">İletişim ve Veri Kanalları Aktif. <%= firma %></p>
+                <p style="color: #444; margin-top: 5px;">Komuta Merkezi Aktif. Merhaba, <%= firma %></p>
             </div>
             <div style="text-align: right;" data-aos="fade-left">
                 <div id="digital-clock">00:00:00</div>
@@ -73,98 +69,104 @@
             <div class="cyber-card" onclick="openSheets('cizelge')" style="cursor: pointer; border-color: #4285F4;" data-aos="fade-up">
                 <div class="status-pulse"></div>
                 <i class="fas fa-file-excel" style="color: #4285F4 !important;"></i>
-                <div class="card-info"><h3>Dijital Çizelge (Canlı)</h3><p>Ana Operasyon Tablosu</p></div>
+                <div class="card-info"><h3>Dijital Çizelge</h3><p>Ana Operasyon Tablosu</p></div>
             </div>
 
-            <div class="cyber-card" onclick="openSheets('bekleme')" style="cursor: pointer; border-color: var(--warning);" data-aos="fade-up" data-aos-delay="100">
+            <div class="cyber-card" onclick="openSheets('bekleme')" style="cursor: pointer; border-color: var(--warning);" data-aos="fade-up" data-aos-delay="50">
                 <i class="fas fa-stopwatch" style="color: var(--warning) !important;"></i>
-                <div class="card-info"><h3>Bekleme Takibi (Canlı)</h3><p>Özel Bekleme Tablosu</p></div>
+                <div class="card-info"><h3>Bekleme Takibi</h3><p>E-Tablo Senkronizasyonu</p></div>
             </div>
 
-            <a href="https://web.arvento.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: #ff4d4d;" data-aos="fade-up" data-aos-delay="200">
+            <a href="https://web.arvento.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: #ff4d4d;" data-aos="fade-up" data-aos-delay="100">
                 <i class="fas fa-satellite-dish" style="color: #ff4d4d !important;"></i>
-                <div class="card-info"><h3>Arvento Canlı Takip</h3><p>GPS Uydu Bağlantısı</p></div>
+                <div class="card-info"><h3>Arvento Takip</h3><p>GPS Uydu Bağlantısı</p></div>
             </a>
 
-            <a href="https://www.luca.com.tr/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--accent);" data-aos="fade-up" data-aos-delay="300">
+            <a href="https://www.luca.com.tr/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--accent);" data-aos="fade-up" data-aos-delay="150">
                 <i class="fas fa-calculator" style="color: var(--accent) !important;"></i>
                 <div class="card-info"><h3>Luca Finans</h3><p>Muhasebe Portalı</p></div>
             </a>
 
-            <a href="https://web.whatsapp.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--whatsapp);" data-aos="fade-up" data-aos-delay="350">
+            <div class="cyber-card" onclick="openSheets('petrol')" style="cursor: pointer; border-color: var(--petrol);" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-gas-pump" style="color: var(--petrol) !important;"></i>
+                <div class="card-info"><h3>Akaryakıt Fiyatları</h3><p>Petrol Ofisi Güncel</p></div>
+            </div>
+
+            <div class="cyber-card" onclick="openModal('driver-modal')" style="cursor: pointer; border-color: #a855f7;" data-aos="fade-up" data-aos-delay="250">
+                <i class="fas fa-user-tie" style="color: #a855f7 !important;"></i>
+                <div class="card-info"><h3>Şoför Rehberi</h3><p>Personel & Belge Takibi</p></div>
+            </div>
+
+            <div class="cyber-card" onclick="openModal('log-modal')" style="cursor: pointer; border-color: #64748b;" data-aos="fade-up" data-aos-delay="300">
+                <i class="fas fa-box-archive" style="color: #64748b !important;"></i>
+                <div class="card-info"><h3>Sistem Logları</h3><p>Son Hareket Kayıtları</p></div>
+            </div>
+
+            <a href="https://web.whatsapp.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--whatsapp);" data-aos="fade-up">
                 <i class="fab fa-whatsapp" style="color: var(--whatsapp) !important;"></i>
-                <div class="card-info"><h3>Kurumsal WhatsApp</h3><p>Hızlı İletişim Hattı</p></div>
+                <div class="card-info"><h3>Kurumsal WhatsApp</h3></div>
             </a>
 
-            <a href="https://outlook.live.com/" target="_blank" class="cyber-card" style="text-decoration: none; border-color: var(--outlook);" data-aos="fade-up" data-aos-delay="400">
-                <i class="fas fa-envelope-open-text" style="color: var(--outlook) !important;"></i>
-                <div class="card-info"><h3>Kurumsal Mail</h3><p>Outlook Servisleri</p></div>
-            </a>
-
-            <div class="cyber-card" onclick="openModal('sunucu-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="450">
+            <div class="cyber-card" onclick="openModal('sunucu-modal')" style="cursor: pointer;" data-aos="fade-up">
                 <i class="fas fa-server" style="color: #3b82f6 !important;"></i>
-                <div class="card-info"><h3>Sunucu Yönetimi</h3><p>Sistem Bilgileri</p></div>
+                <div class="card-info"><h3>Sunucu Yönetimi</h3></div>
             </div>
 
-            <div class="cyber-card" onclick="openModal('db-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="500">
-                <i class="fas fa-database" style="color: #a855f7 !important;"></i>
-                <div class="card-info"><h3>Veritabanı Durumu</h3><p>SQLite Bilgi Paneli</p></div>
-            </div>
-
-            <div class="cyber-card" onclick="openModal('firewall-modal')" style="cursor: pointer;" data-aos="fade-up" data-aos-delay="550">
+            <div class="cyber-card" onclick="openModal('firewall-modal')" style="cursor: pointer;" data-aos="fade-up">
                 <i class="fas fa-shield-halved" style="color: #22c55e !important;"></i>
-                <div class="card-info"><h3>Güvenlik Duvarı</h3><p>SSL & Şifreleme</p></div>
+                <div class="card-info"><h3>Güvenlik Duvarı</h3></div>
             </div>
         </section>
     </main>
 
     <div id="sheets-overlay" class="sheets-overlay">
         <div class="sheets-toolbar">
-            <h2 id="sheets-title"><i class="fas fa-file-invoice"></i> EGE KALYON TERMİNALİ</h2>
+            <h2 id="sheets-title">TERMİNAL</h2>
             <button class="btn-close-sheets" onclick="closeSheets()">Terminale Dön ✕</button>
         </div>
         <iframe id="sheets-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 
-    <div id="sunucu-modal" class="modal">
+    <div id="note-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2>SUNUCU DURUMU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div>
+            <div class="modal-header"><h2><i class="fas fa-edit"></i> AKILLI NOTLAR</h2><span onclick="closeModal('note-modal')" style="cursor:pointer">✕</span></div>
+            <textarea id="note-area" placeholder="Notlarınızı buraya yazın, otomatik kaydedilir..."></textarea>
+            <p style="font-size:0.7rem; color:#444; margin-top:10px;">* Bu notlar sadece bu cihazda saklanır.</p>
+        </div>
+    </div>
+
+    <div id="log-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2><i class="fas fa-history"></i> SİSTEM HAREKETLERİ</h2><span onclick="closeModal('log-modal')" style="cursor:pointer">✕</span></div>
             <ul class="info-list">
-                <li><span>Lokasyon:</span><span>Frankfurt / Cloud</span></li>
-                <li><span>Uptime:</span><span>%99.98</span></li>
-                <li><span>Node.js:</span><span>v20.x</span></li>
-                <li><span>Durum:</span><span style="color:#22c55e">ONLINE</span></li>
+                <li><span>Oturum Açıldı:</span><span id="log-time">Az Önce</span></li>
+                <li><span>Veritabanı:</span><span>Bağlantı Kuruldu</span></li>
+                <li><span>Güvenlik Katmanı:</span><span>AES-256 Aktif</span></li>
+                <li><span>IP Adresi:</span><span>Gizli (SSL)</span></li>
             </ul>
         </div>
     </div>
 
-    <div id="db-modal" class="modal">
+    <div id="driver-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2>VERİTABANI</h2><span onclick="closeModal('db-modal')" style="cursor:pointer">✕</span></div>
+            <div class="modal-header"><h2><i class="fas fa-id-card"></i> PERSONEL REHBERİ</h2><span onclick="closeModal('driver-modal')" style="cursor:pointer">✕</span></div>
             <ul class="info-list">
-                <li><span>Motor:</span><span>SQLite 3</span></li>
-                <li><span>Yedekleme:</span><span>Günlük Otomatik</span></li>
-                <li><span>Sorgu Hızı:</span><span>0.1ms</span></li>
+                <li><span>Kayıtlı Şoför:</span><span>14 Aktif</span></li>
+                <li><span>Belge Uyarısı:</span><span style="color:var(--danger)">2 Kişi (Vadesi Geçen)</span></li>
+                <li><span>Son Güncelleme:</span><span>Bugün 09:00</span></li>
             </ul>
+            <p style="color:#555; font-size:0.8rem; text-align:center; margin-top:20px;">Personel detayları E-Tablo üzerinden yönetilmektedir.</p>
         </div>
     </div>
 
-    <div id="firewall-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2>GÜVENLİK TERMİNALİ</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div>
-            <ul class="info-list">
-                <li><span>SSL Sertifikası:</span><span>SHA-256 (Aktif)</span></li>
-                <li><span>Şifreleme:</span><span>AES-GCM-256</span></li>
-                <li><span>Koruma:</span><span>WAF Layer 7</span></li>
-            </ul>
-        </div>
-    </div>
+    <div id="sunucu-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>SUNUCU</h2><span onclick="closeModal('sunucu-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>Lokasyon:</span><span>Frankfurt</span></li><li><span>Durum:</span><span>ONLINE</span></li></ul></div></div>
+    <div id="firewall-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>GÜVENLİK</h2><span onclick="closeModal('firewall-modal')" style="cursor:pointer">✕</span></div><ul class="info-list"><li><span>SSL:</span><span>Aktif</span></li><li><span>Şifreleme:</span><span>AES-GCM</span></li></ul></div></div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
         
-        // CANLI SAAT MOTORU
+        // CANLI SAAT
         setInterval(() => {
             const now = new Date();
             document.getElementById('digital-clock').innerText = now.toLocaleTimeString('tr-TR');
@@ -172,10 +174,14 @@
         }, 1000);
 
         // MODAL KONTROLLERİ
-        function openModal(id) { document.getElementById(id).style.display = 'block'; }
+        function openModal(id) { 
+            document.getElementById(id).style.display = 'block'; 
+            // Log kaydı simülasyonu
+            console.log(id + " modülü açıldı.");
+        }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // GOOGLE SHEETS ENTEGRASYONU
+        // DİNAMİK OVERLAY (SHEETS & PETROL)
         function openSheets(type) {
             const overlay = document.getElementById('sheets-overlay');
             const iframe = document.getElementById('sheets-iframe');
@@ -187,6 +193,9 @@
             } else if(type === 'bekleme') {
                 iframe.src = "https://docs.google.com/spreadsheets/d/1sCy68YJYkvFIpQumgP6_tt5mcBFgDm2WLIbvuVHCgIM/edit?rm=minimal";
                 title.innerHTML = '<i class="fas fa-clock"></i> BEKLEME TAKİBİ EDİTÖRÜ';
+            } else if(type === 'petrol') {
+                iframe.src = "https://www.petrolofisi.com.tr/akaryakit-fiyatlari";
+                title.innerHTML = '<i class="fas fa-gas-pump"></i> CANLI AKARYAKIT FİYATLARI';
             }
 
             overlay.style.display = 'flex';
@@ -196,6 +205,16 @@
             document.getElementById('sheets-overlay').style.display = 'none';
             document.getElementById('sheets-iframe').src = "";
         }
+
+        // AKILLI NOT KAYDETME
+        const noteArea = document.getElementById('note-area');
+        noteArea.value = localStorage.getItem('terminal_notes') || "";
+        noteArea.addEventListener('input', () => {
+            localStorage.setItem('terminal_notes', noteArea.value);
+        });
+
+        // LOG ZAMANI
+        document.getElementById('log-time').innerText = new Date().toLocaleTimeString();
     </script>
 </body>
 </html>
