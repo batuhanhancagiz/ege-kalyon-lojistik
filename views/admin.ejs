@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V3.1</title>
+    <title>Ege Kalyon | Terminal V3.2</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
@@ -24,34 +24,35 @@
             display: flex;
         }
         
-        /* SIDEBAR FIX */
+        /* SIDEBAR */
         .sidebar { width: 260px; height: 100vh; position: fixed; left: 0; top: 0; background: #050505; border-right: 1px solid var(--border); padding: 30px 20px; z-index: 100; }
         
-        /* CONTENT AREA FIX */
+        /* CONTENT AREA */
         .admin-main { flex: 1; margin-left: 260px; min-height: 100vh; display: flex; flex-direction: column; width: calc(100% - 260px); }
         .content-wrapper { padding: 40px; flex: 1; }
 
-        /* MODAL & OVERLAY SİSTEMİ */
+        /* MODAL SİSTEMİ */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); overflow-y: auto; }
         .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 800px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
 
-        /* AKILLI NOTLAR TASARIMI */
+        /* AKILLI NOTLAR GÜNCEL TASARIM */
         .note-input-group { display: flex; gap: 10px; margin-bottom: 20px; }
         .note-input-group input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; outline: none; }
         .note-list { list-style: none; padding: 0; }
-        .note-item { background: var(--glass); border: 1px solid var(--border); padding: 12px 20px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .note-text { flex: 1; color: #ccc; font-size: 0.95rem; }
-        .note-actions { display: flex; gap: 10px; }
-        .note-actions button { background: none; border: none; cursor: pointer; font-size: 1rem; }
+        .note-item { background: var(--glass); border: 1px solid var(--border); padding: 12px 20px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .note-text { flex: 1; color: #ccc; font-size: 0.95rem; cursor: pointer; padding-right: 15px; }
+        .note-actions { display: flex; gap: 12px; }
+        .note-actions button { background: none; border: none; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .note-actions button:hover { transform: scale(1.2); }
 
-        /* FOOTER TASARIMI */
+        /* FOOTER */
         .admin-footer { padding: 40px 20px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--border); text-align: center; }
         .footer-top { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; color: #555; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
         .footer-signature { color: #888; font-size: 0.9rem; font-weight: 600; }
         .signature-red { color: var(--danger); font-weight: 800; }
 
-        /* KART DÜZENİ */
+        /* KARTLAR */
         .grid-cockpit-v2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .cyber-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 25px; transition: 0.3s; position: relative; }
         .cyber-card:hover { border-color: var(--accent); transform: translateY(-5px); }
@@ -62,20 +63,9 @@
 
         .sheets-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; display: none; flex-direction: column; }
         .sheets-toolbar { background: #111; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-        .btn-close-sheets { background: var(--danger); border: none; color: #fff; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
         .info-list { list-style: none; }
         .info-list li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #111; font-size: 0.9rem; }
-        
-        /* ŞOFÖR FORMU */
-        .driver-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; background: var(--glass); padding: 20px; border-radius: 20px; margin-bottom: 25px; }
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .form-group label { font-size: 0.65rem; color: #555; font-weight: 800; text-transform: uppercase; }
-        .form-group input { background: #000 !important; border: 1px solid #222 !important; color: #fff !important; padding: 10px; border-radius: 8px; }
-        .btn-add-driver { grid-column: 1 / -1; background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 900; cursor: pointer; }
-        .doc-badge { padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
-        .doc-ok { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-        .doc-warn { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
         @media (max-width: 1024px) {
             .sidebar { width: 80px; }
@@ -88,7 +78,7 @@
     <aside class="sidebar">
         <div class="sidebar-title" style="color: var(--primary); font-weight: 900; font-size: 1.2rem; margin-bottom: 40px;">EGE KALYON <span>PRO</span></div>
         <nav class="sidebar-nav">
-            <a href="/admin" class="active" style="display: flex; align-items: center; gap: 15px; color: #fff; text-decoration: none; padding: 12px; border-radius: 10px; background: var(--glass); margin-bottom: 10px;"><i class="fas fa-terminal"></i> <span>Dashboard</span></a>
+            <a href="/admin" style="display: flex; align-items: center; gap: 15px; color: #fff; text-decoration: none; padding: 12px; border-radius: 10px; background: var(--glass); margin-bottom: 10px;"><i class="fas fa-terminal"></i> <span>Dashboard</span></a>
             <a href="#" onclick="openSheets('cizelge')" style="display: flex; align-items: center; gap: 15px; color: #888; text-decoration: none; padding: 12px; margin-bottom: 10px;"><i class="fas fa-table"></i> <span>Çizelge</span></a>
             <a href="#" onclick="openSheets('bekleme')" style="display: flex; align-items: center; gap: 15px; color: #888; text-decoration: none; padding: 12px; margin-bottom: 10px;"><i class="fas fa-clock"></i> <span>Bekleme</span></a>
             <a href="#" onclick="openModal('driver-modal')" style="display: flex; align-items: center; gap: 15px; color: #888; text-decoration: none; padding: 12px; margin-bottom: 10px;"><i class="fas fa-user-group"></i> <span>Şoförler</span></a>
@@ -117,7 +107,7 @@
                     <div class="card-info"><h3>Dijital Çizelge</h3><p>Operasyonel Veri Takibi</p></div>
                 </div>
 
-                <div class="cyber-card" onclick="openSheets('bekleme')" style="cursor: pointer; border-color: var(--warning);" data-aos="fade-up" data-aos-delay="50">
+                <div class="cyber-card" onclick="openSheets('bekleme')" style="cursor: pointer; border-color: var(--warning);" data-aos="fade-up">
                     <i class="fas fa-stopwatch" style="color: var(--warning); font-size: 2rem; margin-bottom: 15px;"></i>
                     <div class="card-info"><h3>Bekleme Takibi</h3><p>Canlı Hakediş Analizi</p></div>
                 </div>
@@ -157,7 +147,7 @@
         <footer class="admin-footer">
             <div class="footer-top">
                 <span>Ege Kalyon Lojistik</span>
-                <span>Terminal V3.1</span>
+                <span>Terminal V3.2</span>
                 <span>2026</span>
             </div>
             <div class="footer-signature">
@@ -170,8 +160,8 @@
         <div class="modal-content">
             <div class="modal-header"><h2><i class="fas fa-sticky-note"></i> OPERASYONEL NOTLAR</h2><span onclick="closeModal('note-modal')" style="cursor:pointer">✕</span></div>
             <div class="note-input-group">
-                <input type="text" id="note-input" placeholder="Notunuzu girin...">
-                <button onclick="addNote()" style="background:var(--warning); padding:0 20px; border-radius:10px; font-weight:bold; cursor:pointer;">EKLE</button>
+                <input type="text" id="note-input" placeholder="Notunuzu buraya yazın...">
+                <button id="note-save-btn" onclick="addNote()" style="background:var(--warning); padding:0 20px; border-radius:10px; font-weight:bold; cursor:pointer; border:none; height:45px;">EKLE</button>
             </div>
             <ul id="note-list" class="note-list"></ul>
         </div>
@@ -180,18 +170,17 @@
     <div id="driver-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2><i class="fas fa-users-gear"></i> ŞOFÖR YÖNETİMİ</h2><span onclick="closeModal('driver-modal')" style="cursor:pointer">✕</span></div>
-            <div class="driver-form">
-                <div class="form-group"><label>Ad Soyad</label><input type="text" id="d-name"></div>
-                <div class="form-group"><label>Plaka</label><input type="text" id="d-plate"></div>
-                <div class="form-group"><label>SRC Vade</label><input type="date" id="d-src"></div>
-                <button class="btn-add-driver" onclick="addDriver()">KAYDET</button>
+            <div style="background:var(--glass); padding:20px; border-radius:20px; margin-bottom:20px;">
+                <input type="text" id="d-name" placeholder="Ad Soyad" style="background:#000; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:30%; margin-right:10px;">
+                <input type="text" id="d-plate" placeholder="Plaka" style="background:#000; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:30%; margin-right:10px;">
+                <button onclick="addDriver()" style="background:var(--accent); color:#000; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">KAYDET</button>
             </div>
-            <table class="driver-list-table" style="width:100%"><tbody id="driver-tbody"></tbody></table>
+            <table style="width:100%; border-collapse:collapse;"><tbody id="driver-tbody"></tbody></table>
         </div>
     </div>
 
     <div id="sheets-overlay" class="sheets-overlay">
-        <div class="sheets-toolbar"><h2 id="sheets-title">TERMİNAL</h2><button class="btn-close-sheets" onclick="closeSheets()">KAPAT ✕</button></div>
+        <div class="sheets-toolbar"><h2 id="sheets-title">TERMİNAL</h2><button onclick="closeSheets()" style="background:var(--danger); border:none; color:#fff; padding:10px 20px; border-radius:8px; cursor:pointer;">KAPAT ✕</button></div>
         <iframe id="sheets-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 
@@ -219,35 +208,62 @@
         }
         function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; document.getElementById('sheets-iframe').src = ""; }
 
-        /* AKILLI NOT SİSTEMİ */
+        /* AKILLI NOT SİSTEMİ V3.2 - DÜZENLEME DESTEKLİ */
+        let editNoteId = null;
+
         function getNotes() { return JSON.parse(localStorage.getItem('terminal_notes_v3') || '[]'); }
         function saveNotes(notes) { localStorage.setItem('terminal_notes_v3', JSON.stringify(notes)); }
+
         function addNote() {
             const input = document.getElementById('note-input');
             if(!input.value) return;
             const notes = getNotes();
-            notes.push({ id: Date.now(), text: input.value, done: false });
-            saveNotes(notes);
+
+            if(editNoteId) {
+                // Güncelleme Modu
+                const updatedNotes = notes.map(n => n.id === editNoteId ? {...n, text: input.value} : n);
+                saveNotes(updatedNotes);
+                editNoteId = null;
+                document.getElementById('note-save-btn').innerText = "EKLE";
+                document.getElementById('note-save-btn').style.background = "var(--warning)";
+            } else {
+                // Yeni Ekleme Modu
+                notes.push({ id: Date.now(), text: input.value, done: false });
+                saveNotes(notes);
+            }
+            
             input.value = "";
             renderNotes();
         }
+
+        function editNote(id, text) {
+            document.getElementById('note-input').value = text;
+            editNoteId = id;
+            document.getElementById('note-save-btn').innerText = "GÜNCELLE";
+            document.getElementById('note-save-btn').style.background = "var(--accent)";
+            document.getElementById('note-input').focus();
+        }
+
         function deleteNote(id) {
             const notes = getNotes().filter(n => n.id !== id);
             saveNotes(notes);
             renderNotes();
         }
+
         function toggleNote(id) {
             const notes = getNotes().map(n => n.id === id ? {...n, done: !n.done} : n);
             saveNotes(notes);
             renderNotes();
         }
+
         function renderNotes() {
             const list = document.getElementById('note-list');
             list.innerHTML = getNotes().map(n => `
                 <li class="note-item">
-                    <span class="note-text" style="${n.done ? 'text-decoration:line-through; opacity:0.5' : ''}">${n.text}</span>
+                    <span class="note-text" onclick="editNote(${n.id}, '${n.text.replace(/'/g, "\\'")}')" style="${n.done ? 'text-decoration:line-through; opacity:0.5' : ''}">${n.text}</span>
                     <div class="note-actions">
                         <button style="color:var(--accent)" onclick="toggleNote(${n.id})"><i class="fas fa-check-circle"></i></button>
+                        <button style="color:var(--primary)" onclick="editNote(${n.id}, '${n.text.replace(/'/g, "\\Source")}')"><i class="fas fa-edit"></i></button>
                         <button style="color:var(--danger)" onclick="deleteNote(${n.id})"><i class="fas fa-trash"></i></button>
                     </div>
                 </li>
@@ -259,10 +275,9 @@
         function addDriver() {
             const name = document.getElementById('d-name').value;
             const plate = document.getElementById('d-plate').value;
-            const src = document.getElementById('d-src').value;
             if(!name || !plate) return;
             const drivers = getDrivers();
-            drivers.push({ id: Date.now(), name, plate, src });
+            drivers.push({ id: Date.now(), name, plate });
             localStorage.setItem('drivers_v3', JSON.stringify(drivers));
             renderDrivers();
         }
@@ -273,12 +288,11 @@
         }
         function renderDrivers() {
             const tbody = document.getElementById('driver-tbody');
-            const today = new Date();
             tbody.innerHTML = getDrivers().map(d => `
                 <tr style="border-bottom:1px solid #111">
-                    <td style="padding:10px"><b>${d.name}</b><br><small>${d.plate}</small></td>
-                    <td><span class="doc-badge ${d.src && new Date(d.src) < today ? 'doc-warn' : 'doc-ok'}">${d.src || 'SRC Yok'}</span></td>
-                    <td><button onclick="deleteDriver(${d.id})" style="color:var(--danger); border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                    <td style="padding:15px"><b>${d.name}</b></td>
+                    <td style="padding:15px">${d.plate}</td>
+                    <td style="text-align:right"><button onclick="deleteDriver(${d.id})" style="color:var(--danger); border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
                 </tr>
             `).join('');
         }
