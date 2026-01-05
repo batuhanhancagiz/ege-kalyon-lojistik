@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;600;700&display=swap" rel="stylesheet">
-    <title>Ege Kalyon | Hyper Terminal V1.5</title>
+    <title>Ege Kalyon | Hyper Terminal V1.6 PRO</title>
     <style>
         :root { 
             --neon-blue: #00f3ff;
@@ -56,6 +56,12 @@
         }
         @keyframes particleMove { 0% { background-position: 0 0; } 100% { background-position: 100px 100px; } }
 
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            pointer-events: none; z-index: 9998; opacity: 0.3;
+        }
+
         /* --- SIDEBAR --- */
         .sidebar { 
             width: 280px; height: 100vh; position: fixed; left: 0; top: 0; 
@@ -77,6 +83,8 @@
         }
         @keyframes glowText { from { text-shadow: 0 0 5px var(--neon-blue); } to { text-shadow: 0 0 20px var(--neon-blue), 0 0 10px #fff; } }
 
+        .sidebar-title span { display: block; font-size: 0.5em; color: var(--neon-green); letter-spacing: 3px; margin-top: 5px; }
+
         .nav-item {
             display: flex; align-items: center; gap: 15px; 
             color: #aaa; text-decoration: none; padding: 14px 15px; 
@@ -85,11 +93,17 @@
             border: 1px solid transparent;
             transition: 0.3s; position: relative; overflow: hidden;
         }
+        .nav-item::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
         .nav-item:hover, .nav-item.active {
             color: #fff; border-color: var(--neon-blue);
             background: rgba(0, 243, 255, 0.1); text-shadow: 0 0 5px var(--neon-blue);
             transform: translateX(10px);
         }
+        .nav-item:hover::before { left: 100%; }
         
         /* --- MAIN CONTENT --- */
         .admin-main { flex: 1; margin-left: 280px; width: calc(100% - 280px); padding: 30px; position: relative; z-index: 1; transition: 0.3s; }
@@ -111,7 +125,8 @@
             align-items: start; 
         }
 
-        /* RADAR WIDGET (YENİ) */
+        /* RADAR WIDGET */
+        .radar-section { position: relative; }
         .radar-container {
             background: var(--glass-bg); border: 1px solid var(--neon-blue);
             border-radius: 50%; width: 280px; height: 280px;
@@ -143,6 +158,453 @@
         /* CARDS */
         .cards-area { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
         
+        .cyber-card { 
+            background: var(--glass-bg); border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px; border-radius: 10px; position: relative; overflow: hidden;
+            transition: 0.4s ease; cursor: pointer; backdrop-filter: blur(10px);
+            animation: floatCard 6s ease-in-out infinite;
+        }
+        .cyber-card:nth-child(2n) { animation-delay: 1s; }
+        @keyframes floatCard { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+        .cyber-card:hover { border-color: var(--neon-blue); box-shadow: 0 0 25px rgba(0, 243, 255, 0.3); transform: scale(1.05); z-index: 10; }
+        .cyber-card i { font-size: 2rem; margin-bottom: 15px; color: #aaa; transition:0.3s; }
+        .cyber-card:hover i { color: #fff; text-shadow: 0 0 15px currentColor; transform: rotateY(180deg); }
+        
+        /* LIVE LOGS */
+        .live-logs {
+            background: #000; border: 1px solid var(--neon-green);
+            height: 400px; padding: 15px; font-family: 'Courier New', monospace;
+            font-size: 0.75rem; color: var(--neon-green); overflow: hidden;
+            position: relative; opacity: 0.8;
+        }
+        .live-logs::before { content: "SYSTEM_TERMINAL_V1.6"; position: absolute; top:0; right:0; background: var(--neon-green); color:#000; padding: 2px 5px; font-weight: bold; }
+        .log-content { display: flex; flex-direction: column; gap: 5px; }
+        .log-entry { animation: fadeIn 0.3s; }
+
+        /* MODALS */
+        .modal { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
+        .modal-content { 
+            background: rgba(8, 10, 15, 0.98); margin: 5% auto; padding: 30px; 
+            border: 1px solid var(--neon-blue); border-top: 5px solid var(--neon-blue); border-bottom: 5px solid var(--neon-purple);
+            width: 90%; max-width: 900px; max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 0 80px rgba(0, 243, 255, 0.2); 
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* INPUTS & BUTTONS */
+        .cyber-input { background: rgba(255,255,255,0.05); border: 1px solid #444; color: #fff; padding: 12px; width: 100%; outline: none; font-family: 'Rajdhani'; transition:0.3s; border-radius: 4px; }
+        .cyber-input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,243,255,0.2); }
+        .cyber-btn { 
+            background: linear-gradient(90deg, rgba(0,243,255,0.1), transparent); 
+            border: 1px solid var(--neon-blue); color: var(--neon-blue); 
+            padding: 12px 30px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; 
+            transition: 0.3s; width: 100%; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .cyber-btn:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 30px var(--neon-blue); }
+
+        /* TABLES & FUEL PRICES */
+        .driver-table { width:100%; border-collapse: collapse; }
+        .driver-table th { text-align: left; padding: 15px; color: var(--neon-purple); border-bottom: 1px solid #333; font-family: 'Orbitron'; font-size: 0.8rem; }
+        .driver-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; }
+        .driver-table tr:hover td { background: rgba(0,243,255,0.05); color: #fff; }
+
+        .price-change { font-size:0.8rem; font-weight:bold; }
+        .price-up { color: var(--neon-green); }
+        .price-down { color: var(--neon-pink); }
+
+        /* RESPONSIVE */
+        .menu-toggle { display: none; position: fixed; top: 20px; left: 20px; z-index: 2000; background: #000; border: 1px solid var(--neon-blue); color: var(--neon-blue); padding: 10px; }
+        
+        @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr; } .radar-container { margin-bottom: 30px; } .live-logs { display: none; } }
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar.active { transform: translateX(0); }
+            .admin-main { margin-left: 0; width: 100%; padding: 15px; padding-top: 70px; }
+            .admin-header { flex-direction: column; align-items: flex-start; }
+            .modal-content { width: 95%; margin: 10% auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="boot-screen">
+        <div class="loader-text">SİSTEM BAŞLATILIYOR...</div>
+        <div class="loader-bar"></div>
+        <div style="margin-top:10px; color:#555; font-size:0.8rem; font-family:'Rajdhani'">EGE KALYON V1.6 PROTOCOL</div>
+    </div>
+
+    <div class="particles"></div>
+    <div class="cyber-grid-floor"></div>
+    <div class="scanlines"></div>
+    
+    <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+    <aside class="sidebar" id="mySidebar">
+        <div class="sidebar-title">
+            EGE KALYON
+            <span style="color:var(--neon-green)">HYPER-TERMINAL V1.6</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin" class="nav-item active"><i class="fas fa-rocket"></i> <span>KOKPİT</span></a>
+            <a href="#" onclick="openSheets('cizelge')" class="nav-item"><i class="fas fa-file-waveform"></i> <span>CANLI ÇİZELGE</span></a>
+            <a href="#" onclick="openSheets('bekleme')" class="nav-item"><i class="fas fa-hourglass-half"></i> <span>BEKLEME ANALİZİ</span></a>
+            <a href="#" onclick="openModal('driver-modal')" class="nav-item"><i class="fas fa-users-viewfinder"></i> <span>PERSONEL AĞI</span></a>
+            <a href="#" onclick="openModal('fuel-modal')" class="nav-item"><i class="fas fa-gas-pump"></i> <span>YAKIT & P.O FİYAT</span></a>
+            <a href="#" onclick="openModal('maintenance-modal')" class="nav-item"><i class="fas fa-wrench"></i> <span>BAKIM MERKEZİ</span></a>
+            <a href="#" onclick="openModal('map-modal')" class="nav-item"><i class="fas fa-map-location-dot"></i> <span>GÜZERGAH HARİTASI</span></a>
+            <a href="#" onclick="openModal('note-modal')" class="nav-item"><i class="fas fa-microchip"></i> <span>HAFIZA BANKASI</span></a>
+            <a href="/cikis" class="nav-item" style="color: var(--neon-pink); border-color:var(--neon-pink); margin-top: auto;"><i class="fas fa-power-off"></i> <span>BAĞLANTIYI KES</span></a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div data-aos="fade-right">
+                <h1 class="glitch">KOMUTA MERKEZİ</h1>
+                <div style="display:flex; gap:15px; margin-top:10px; flex-wrap:wrap;">
+                    <span style="color:var(--neon-blue); border:1px solid var(--neon-blue); padding:2px 8px; font-size:0.7rem;">ONLINE</span>
+                    <span style="color:var(--neon-green); border:1px solid var(--neon-green); padding:2px 8px; font-size:0.7rem;">SİSTEM: GÜVENLİ</span>
+                    <span id="live-weather" style="color:var(--neon-yellow); border:1px solid var(--neon-yellow); padding:2px 8px; font-size:0.7rem;">
+                        <i class="fas fa-spinner fa-spin"></i> HAVA VERİSİ ALINIYOR...
+                    </span>
+                </div>
+            </div>
+            <div style="text-align: right; color: #fff;" data-aos="fade-left">
+                <div id="digital-clock" style="font-family:'Orbitron'; font-size:2.5rem; text-shadow:0 0 15px white;">00:00:00</div>
+                <div id="digital-date" style="color:var(--neon-purple); letter-spacing:2px; font-weight:bold;">...</div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="radar-section" data-aos="zoom-in">
+                <div class="radar-container">
+                    <div class="radar-grid"></div>
+                    <div class="radar-scan"></div>
+                    <div class="radar-blip" style="top:30%; left:40%;"></div>
+                    <div class="radar-blip" style="top:70%; left:20%; animation-delay:1s;"></div>
+                    <div class="radar-blip" style="top:50%; left:80%; animation-delay:0.5s;"></div>
+                </div>
+                <div style="text-align:center; margin-top:15px; color:var(--neon-blue); font-family:'Orbitron'; font-size:0.9rem;">
+                    <i class="fas fa-satellite-dish fa-spin" style="margin-right:5px;"></i> AKTİF TARAMA
+                </div>
+            </div>
+
+            <div class="cards-area">
+                <div class="cyber-card" onclick="openSheets('cizelge')">
+                    <i class="fas fa-table-cells" style="color:#4285F4;"></i>
+                    <div class="card-info"><h3>DİJİTAL ÇİZELGE</h3><p>CANLI VERİ AKIŞI</p></div>
+                </div>
+
+                <div class="cyber-card" onclick="openSheets('bekleme')">
+                    <i class="fas fa-stopwatch" style="color:var(--neon-yellow);"></i>
+                    <div class="card-info"><h3>BEKLEME SÜRESİ</h3><p>ANALİZ MODÜLÜ</p></div>
+                </div>
+
+                <div class="cyber-card" onclick="openModal('fuel-modal')">
+                    <i class="fas fa-gas-pump" style="color:var(--neon-pink);"></i>
+                    <div class="card-info"><h3>P.O CANLI FİYAT</h3><p id="card-fuel-price">VERİ ÇEKİLİYOR...</p></div>
+                </div>
+
+                <a href="https://web.arvento.com/" target="_blank" class="cyber-card" style="text-decoration:none;">
+                    <i class="fas fa-satellite" style="color:var(--neon-green);"></i>
+                    <div class="card-info"><h3>ARVENTO SAT</h3><p>UYDU BAĞLANTISI</p></div>
+                </a>
+
+                <div class="cyber-card" onclick="openModal('driver-modal')">
+                    <i class="fas fa-id-card-clip" style="color:var(--neon-blue);"></i>
+                    <div class="card-info"><h3>PERSONEL</h3><p>ŞOFÖR & EVRAK</p></div>
+                </div>
+
+                <div class="cyber-card" onclick="openModal('maintenance-modal')">
+                    <i class="fas fa-truck-medical" style="color:var(--neon-orange);"></i>
+                    <div class="card-info"><h3>FİLO SAĞLIĞI</h3><p>BAKIM DURUMU</p></div>
+                </div>
+
+                <div class="cyber-card" onclick="openModal('map-modal')">
+                    <i class="fas fa-road" style="color:#fff;"></i>
+                    <div class="card-info"><h3>YOL ANALİZİ</h3><p>TRAFİK DURUMU</p></div>
+                </div>
+
+                <div class="cyber-card" onclick="openModal('finance-modal')">
+                    <i class="fas fa-chart-line" style="color:var(--neon-purple);"></i>
+                    <div class="card-info"><h3>FİNANSAL</h3><p>GELİR/GİDER</p></div>
+                </div>
+            </div>
+
+            <div class="live-logs" id="terminal-log">
+                <div class="log-content" id="log-content"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="driver-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>// PERSONEL YÖNETİM PROTOKOLÜ</h2><span onclick="closeModal('driver-modal')">✕</span></div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">
+                <input type="text" id="d-name" placeholder="AD SOYAD" class="cyber-input">
+                <input type="text" id="d-tc" placeholder="TC KİMLİK" class="cyber-input">
+                <input type="text" id="d-phone" placeholder="TELEFON" class="cyber-input">
+                <input type="text" id="d-plate" placeholder="ARAÇ PLAKA" class="cyber-input">
+                <input type="date" id="d-lic-date" class="cyber-input">
+                <input type="date" id="d-src-date" class="cyber-input">
+            </div>
+            <button onclick="addDriver()" class="cyber-btn">PERSONELİ VERİTABANINA İŞLE</button>
+            <div style="overflow-x:auto; margin-top:20px;">
+                <table class="driver-table"><tbody id="driver-tbody"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <div id="note-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>// SİSTEM HAFIZA NOTLARI</h2><span onclick="closeModal('note-modal')">✕</span></div>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <input type="text" id="note-input" placeholder=">> VERİ GİRİŞİ YAPIN..." class="cyber-input" style="flex:1;">
+                <button onclick="addNote()" class="cyber-btn" style="width:auto;">KAYDET</button>
+            </div>
+            <ul id="note-list" style="list-style:none; padding:0;"></ul>
+        </div>
+    </div>
+
+    <div id="fuel-modal" class="modal">
+        <div class="modal-content" style="text-align:center;">
+            <div class="modal-header"><h2><i class="fas fa-gas-pump" style="color:var(--neon-pink)"></i> PETROL OFİSİ CANLI FİYATLAR (İZMİR)</h2><span onclick="closeModal('fuel-modal')">✕</span></div>
+            
+            <div style="margin-bottom:30px; border:1px solid var(--neon-pink); padding:20px; background:rgba(255, 0, 85, 0.05); border-radius:10px;">
+                <table class="driver-table">
+                    <thead>
+                        <tr>
+                            <th style="color:var(--neon-pink)">ÜRÜN</th>
+                            <th style="color:var(--neon-pink)">BİRİM FİYAT (TL)</th>
+                            <th style="color:var(--neon-pink)">DURUM</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fuel-prices-body">
+                        </tbody>
+                </table>
+                <p style="font-size:0.7rem; color:#666; margin-top:10px; text-align:right;">* VERİLER SİMÜLASYON AMAÇLIDIR. ANLIK GÜNCELLEME AKTİF.</p>
+            </div>
+
+            <h3 style="color:#fff; border-top:1px solid #333; padding-top:20px;">ORTALAMA FİLO TÜKETİMİ: <span style="color:var(--neon-pink)">28.4 LT / 100KM</span></h3>
+            <div style="background:rgba(255,255,255,0.1); padding:15px; margin-top:10px; border-radius:5px;">
+                <p style="display:flex; justify-content:space-between;"><span>34 EGE 01</span> <span>27 LT</span></p>
+                <div style="width:100%; height:5px; background:#333;"><div style="width:70%; height:100%; background:var(--neon-pink);"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="maintenance-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>BAKIM VE ONARIM</h2><span onclick="closeModal('maintenance-modal')">✕</span></div>
+            <table class="driver-table">
+                <tr><th>PLAKA</th><th>DURUM</th><th>TAHMİNİ BİTİŞ</th></tr>
+                <tr><td>34 KLN 99</td><td style="color:var(--neon-orange)">PERİYODİK BAKIM</td><td>BUGÜN 16:00</td></tr>
+                <tr><td>35 EGE 35</td><td style="color:var(--neon-pink)">LASTİK DEĞİŞİMİ</td><td>YARIN 09:00</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="map-modal" class="modal">
+        <div class="modal-content" style="text-align:center;">
+            <div class="modal-header"><h2>GÜZERGAH HARİTASI</h2><span onclick="closeModal('map-modal')">✕</span></div>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3008.9633698339308!2d28.9748!3d41.0155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzU1LjgiTiAyOMKwNTgnMjkuMyJF!5e0!3m2!1str!2str!4v1635835824000!5m2!1str!2str" width="100%" height="400" style="border:0; border-radius:10px; filter: invert(90%) hue-rotate(180deg);" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <div id="finance-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>FİNANSAL ÖZET</h2><span onclick="closeModal('finance-modal')">✕</span></div>
+            <h1 style="color:var(--neon-green); text-align:center; font-size:3rem; margin:20px 0;">₺ 854,250.00</h1>
+            <p style="text-align:center; color:#888;">BU AYKİ TOPLAM HAKEDİŞ</p>
+        </div>
+    </div>
+
+    <div id="sheets-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:4000; display:none; flex-direction:column;">
+        <div style="background:#050505; padding:15px; display:flex; justify-content:space-between; border-bottom:2px solid var(--neon-blue);">
+            <h3 style="color:var(--neon-blue); font-family:'Orbitron'; margin:0;">DIŞ VERİ BAĞLANTISI</h3>
+            <button onclick="closeSheets()" style="background:none; border:none; color:var(--neon-pink); font-size:1.5rem;"><i class="fas fa-times"></i></button>
+        </div>
+        <iframe id="sheets-iframe" src="" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        // SAAT & TARİH
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('digital-clock').innerText = now.toLocaleTimeString('tr-TR');
+            document.getElementById('digital-date').innerText = now.toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' }).toUpperCase();
+        }, 1000);
+
+        // AÇILIŞ EKRANI
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const boot = document.getElementById('boot-screen');
+                boot.style.opacity = '0';
+                setTimeout(() => { boot.style.display = 'none'; }, 1000);
+                updateWeather(); // Hava durumunu çek
+                updateFuelPrices(); // Yakıt fiyatlarını çek
+            }, 1500);
+        });
+
+        // MOBİL MENÜ
+        function toggleSidebar() { document.getElementById('mySidebar').classList.toggle('active'); }
+
+        // MODAL FONKSİYONLARI
+        function openModal(id) { 
+            document.getElementById(id).style.display = 'block'; 
+            if(id==='driver-modal') renderDrivers(); 
+            if(id==='note-modal') renderNotes();
+            document.getElementById('mySidebar').classList.remove('active');
+        }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // SHEETS
+        function openSheets(type) {
+            const overlay = document.getElementById('sheets-overlay');
+            const iframe = document.getElementById('sheets-iframe');
+            if(type==='cizelge') iframe.src = "https://docs.google.com/spreadsheets/d/1WaSNv0a2Nn-xDiHMX3VsLwYaOwTS5maCtrzRS9zUdlc/edit?rm=minimal";
+            else iframe.src = "https://docs.google.com/spreadsheets/d/1sCy68YJYkvFIpQumgP6_tt5mcBFgDm2WLIbvuVHCgIM/edit?rm=minimal";
+            overlay.style.display = 'flex';
+        }
+        function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; document.getElementById('sheets-iframe').src = ""; }
+
+        /* --- SİMÜLASYON LOGLARI --- */
+        const logs = ["SYSTEM_INIT...", "CONNECTING TO SATELLITE...", "CHECKING DRIVER DB...", "FUEL_LEVEL: OK", "SYNCING WITH ARVENTO...", "DATA PACKET RECEIVED", "ENCRYPTION: SECURE", "PING: 12ms", "UPDATING MAP DATA..."];
+        function addLog() {
+            const logContainer = document.getElementById('log-content');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `> ${logs[Math.floor(Math.random() * logs.length)]} <span style="float:right; opacity:0.5">${new Date().toLocaleTimeString()}</span>`;
+            logContainer.prepend(logEntry);
+            if(logContainer.children.length > 15) logContainer.removeChild(logContainer.lastChild);
+        }
+        setInterval(addLog, 2000);
+
+        /* --- CANLI HAVA DURUMU (İZMİR SİMÜLASYON) --- */
+        function updateWeather() {
+            // Gerçek API olmadığı için mevsimsel İzmir verisi simüle ediliyor
+            const weathers = [
+                { icon: "fa-sun", text: "AÇIK" },
+                { icon: "fa-cloud-sun", text: "PARÇALI BULUTLU" },
+                { icon: "fa-wind", text: "RÜZGARLI" }
+            ];
+            const randWeather = weathers[Math.floor(Math.random() * weathers.length)];
+            const temp = 16 + Math.floor(Math.random() * 4); // 16-20 derece arası
+            
+            document.getElementById('live-weather').innerHTML = 
+                `<i class="fas ${randWeather.icon}"></i> İZMİR: ${temp}°C ${randWeather.text}`;
+        }
+        setInterval(updateWeather, 60000); // Her 1 dakikada bir güncelle
+
+        /* --- CANLI YAKIT FİYATLARI (PETROL OFİSİ SİMÜLASYON) --- */
+        function updateFuelPrices() {
+            // Simüle edilmiş güncel piyasa fiyatları (Değişim animasyonu için)
+            const prices = {
+                diesel: (44.50 + (Math.random() * 0.5)).toFixed(2),
+                gasoline: (43.20 + (Math.random() * 0.5)).toFixed(2),
+                lpg: (22.10 + (Math.random() * 0.3)).toFixed(2)
+            };
+
+            // Karta yaz
+            document.getElementById('card-fuel-price').innerText = `MOTORİN: ${prices.diesel} TL`;
+
+            // Modala yaz
+            const tbody = document.getElementById('fuel-prices-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td>V/MAX DIESEL</td>
+                    <td>${prices.diesel} TL</td>
+                    <td class="price-change price-up"><i class="fas fa-caret-up"></i> %0.2</td>
+                </tr>
+                <tr>
+                    <td>V/MAX KURŞUNSUZ 95</td>
+                    <td>${prices.gasoline} TL</td>
+                    <td class="price-change price-up"><i class="fas fa-caret-up"></i> %0.1</td>
+                </tr>
+                <tr>
+                    <td>PO/GAZ OTOGAZ</td>
+                    <td>${prices.lpg} TL</td>
+                    <td class="price-change price-down"><i class="fas fa-caret-down"></i> %0.05</td>
+                </tr>
+            `;
+        }
+        setInterval(updateFuelPrices, 5000); // Her 5 saniyede bir borsa gibi güncelle
+
+        /* --- SÜRÜCÜ SİSTEMİ --- */
+        function getDrivers() { return JSON.parse(localStorage.getItem('drivers_v4') || '[]'); }
+        function addDriver() {
+            const name = document.getElementById('d-name').value;
+            const tc = document.getElementById('d-tc').value;
+            const phone = document.getElementById('d-phone').value;
+            const plate = document.getElementById('d-plate').value;
+            const licDate = document.getElementById('d-lic-date').value;
+            const srcDate = document.getElementById('d-src-date').value;
+            if(!name) { alert("HATA: İSİM GİRİŞİ ZORUNLU."); return; }
+            const drivers = getDrivers();
+            drivers.push({ id: Date.now(), name, tc, phone, plate, licDate, srcDate });
+            localStorage.setItem('drivers_v4', JSON.stringify(drivers));
+            renderDrivers();
+            document.querySelectorAll('#driver-modal input').forEach(i => i.value = '');
+        }
+        function deleteDriver(id) {
+            if(confirm('BU KAYIT SİLİNSİN Mİ?')) {
+                localStorage.setItem('drivers_v4', JSON.stringify(getDrivers().filter(d => d.id !== id)));
+                renderDrivers();
+            }
+        }
+        function formatDate(d) { return d ? new Date(d).toLocaleDateString('tr-TR') : '-'; }
+        function isExpired(d) { return d && new Date(d) < new Date(); }
+        function renderDrivers() {
+            const tbody = document.getElementById('driver-tbody');
+            const drivers = getDrivers();
+            if(drivers.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">VERİ YOK</td></tr>'; return; }
+            tbody.innerHTML = drivers.map(d => {
+                const licExp = isExpired(d.licDate);
+                const srcExp = isExpired(d.srcDate);
+                return `
+                <tr>
+                    <td><b style="color:#fff">${d.name}</b></td>
+                    <td>${d.phone}</td>
+                    <td><span style="background:#222; padding:2px 5px; border-radius:3px;">${d.plate}</span></td>
+                    <td style="color:${licExp ? 'var(--neon-pink)' : 'var(--neon-blue)'}">${formatDate(d.licDate)} ${licExp ? '(!)' : ''}</td>
+                    <td style="color:${srcExp ? 'var(--neon-pink)' : 'var(--neon-blue)'}">${formatDate(d.srcDate)} ${srcExp ? '(!)' : ''}</td>
+                    <td><button onclick="deleteDriver(${d.id})" style="color:red; background:none; border:none;"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+            }).join('');
+        }
+
+        /* --- NOT SİSTEMİ --- */
+        function getNotes() { return JSON.parse(localStorage.getItem('notes_v3') || '[]'); }
+        function addNote() {
+            const input = document.getElementById('note-input');
+            if(!input.value) return;
+            const notes = getNotes();
+            notes.push({ id: Date.now(), text: input.value, date: new Date().toLocaleString('tr-TR') });
+            localStorage.setItem('notes_v3', JSON.stringify(notes));
+            input.value = '';
+            renderNotes();
+        }
+        function deleteNote(id) {
+            localStorage.setItem('notes_v3', JSON.stringify(getNotes().filter(n => n.id !== id)));
+            renderNotes();
+        }
+        function renderNotes() {
+            document.getElementById('note-list').innerHTML = getNotes().map(n => `
+                <li style="background:rgba(255,255,255,0.05); padding:10px; margin-bottom:5px; border-left:3px solid var(--neon-blue); display:flex; justify-content:space-between;">
+                    <span>${n.text} <br><small style="color:#666">${n.date}</small></span>
+                    <button onclick="deleteNote(${n.id})" style="color:var(--neon-pink); background:none; border:none;"><i class="fas fa-trash"></i></button>
+                </li>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
         .cyber-card { 
             background: var(--glass-bg); border: 1px solid rgba(255,255,255,0.1);
             padding: 20px; border-radius: 10px; position: relative; overflow: hidden;
@@ -502,3 +964,4 @@
     </script>
 </body>
 </html>
+
