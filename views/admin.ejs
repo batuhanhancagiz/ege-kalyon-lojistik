@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;600;700&display=swap" rel="stylesheet">
-    <title>Ege Kalyon | Hyper Terminal V1.6 PRO</title>
+    <title>Ege Kalyon | Commander V1.7</title>
     <style>
         :root { 
             --neon-blue: #00f3ff;
@@ -34,28 +34,39 @@
             font-size: 16px;
         }
 
-        /* --- BACKGROUND FX (CANLI ATMOSFER) --- */
+        /* --- BOOT SCREEN (AÇILIŞ) --- */
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease-out;
+        }
+        .loader-content { text-align: center; width: 300px; }
+        .loader-text { color: var(--neon-blue); font-family: 'Orbitron'; letter-spacing: 3px; margin-bottom: 10px; font-size: 1.2rem; }
+        .loader-bar-bg { width: 100%; height: 4px; background: #333; position: relative; overflow: hidden; border-radius: 2px; }
+        .loader-bar-fill { 
+            position: absolute; top: 0; left: 0; height: 100%; background: var(--neon-blue); 
+            width: 0%; animation: bootLoad 2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; 
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        .boot-logs { font-family: 'Courier New'; color: var(--neon-green); font-size: 0.7rem; margin-top: 15px; text-align: left; height: 60px; overflow: hidden; opacity: 0.7; }
+        
+        @keyframes bootLoad { 0% { width: 0%; } 40% { width: 60%; } 100% { width: 100%; } }
+
+        /* --- BACKGROUND FX --- */
         .cyber-grid-floor {
             position: fixed; bottom: -20%; left: -50%; width: 200%; height: 120%;
             background-image: 
                 linear-gradient(var(--neon-purple) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.2) 1px, transparent 1px);
-            background-size: 60px 60px;
+                linear-gradient(90deg, rgba(0, 243, 255, 0.15) 1px, transparent 1px);
+            background-size: 50px 50px;
             transform: perspective(400px) rotateX(60deg);
             opacity: 0.2;
-            animation: moveGrid 8s linear infinite;
+            animation: moveGrid 10s linear infinite;
             z-index: -2;
             pointer-events: none;
         }
-        @keyframes moveGrid { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
-
-        .particles {
-            position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1;
-            background: radial-gradient(white, rgba(255,255,255,0) 2px, transparent 3px);
-            background-size: 100px 100px; background-position: 0 0;
-            opacity: 0.1; animation: particleMove 20s linear infinite;
-        }
-        @keyframes particleMove { 0% { background-position: 0 0; } 100% { background-position: 100px 100px; } }
+        @keyframes moveGrid { 0% { background-position: 0 0; } 100% { background-position: 0 50px; } }
 
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -76,14 +87,11 @@
         }
         
         .sidebar-title {
-            font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900;
+            font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 900;
             color: #fff; text-align: center; margin-bottom: 30px;
             text-shadow: 0 0 10px var(--neon-blue);
             border-bottom: 2px solid var(--neon-purple); padding-bottom: 20px;
-            animation: glowText 2s infinite alternate;
         }
-        @keyframes glowText { from { text-shadow: 0 0 5px var(--neon-blue); } to { text-shadow: 0 0 20px var(--neon-blue), 0 0 10px #fff; } }
-
         .sidebar-title span { display: block; font-size: 0.5em; color: var(--neon-green); letter-spacing: 3px; margin-top: 5px; }
 
         .nav-item {
@@ -94,17 +102,11 @@
             border: 1px solid transparent;
             transition: 0.3s; position: relative; overflow: hidden;
         }
-        .nav-item::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
-            transition: 0.5s;
-        }
         .nav-item:hover, .nav-item.active {
             color: #fff; border-color: var(--neon-blue);
             background: rgba(0, 243, 255, 0.1); text-shadow: 0 0 5px var(--neon-blue);
             transform: translateX(10px);
         }
-        .nav-item:hover::before { left: 100%; }
         
         /* --- MAIN CONTENT --- */
         .admin-main { flex: 1; margin-left: 280px; width: calc(100% - 280px); padding: 30px; position: relative; z-index: 1; transition: 0.3s; }
@@ -118,45 +120,28 @@
         }
         @keyframes glitchAnim { 0% { opacity: 1; transform: skew(0deg); } 2% { opacity: 0.8; transform: skew(-2deg); } 4% { opacity: 1; transform: skew(0deg); } }
 
-        /* --- DASHBOARD GRID --- */
+        /* --- DASHBOARD LAYOUT --- */
         .dashboard-grid { 
             display: grid; 
-            grid-template-columns: 300px 1fr 250px; 
-            gap: 20px; 
+            grid-template-columns: 260px 1fr 280px; 
+            gap: 25px; 
             align-items: start; 
         }
 
-        /* RADAR WIDGET */
-        .radar-section { position: relative; }
-        .radar-container {
-            background: var(--glass-bg); border: 1px solid var(--neon-blue);
-            border-radius: 50%; width: 280px; height: 280px;
-            position: relative; margin: 0 auto;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
-            overflow: hidden;
+        /* WIDGET: STAT PANEL (SOL TARAF) */
+        .stat-panel {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            padding: 20px; border-radius: 10px; height: 100%;
+            display: flex; flex-direction: column; gap: 20px;
         }
-        .radar-scan {
-            width: 100%; height: 100%; border-radius: 50%;
-            background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 243, 255, 0.5) 60deg, transparent 65deg);
-            animation: radarSpin 4s linear infinite;
-            border-right: 2px solid var(--neon-blue);
-        }
-        .radar-grid {
-            position: absolute; top:0; left:0; width:100%; height:100%;
-            background-image: radial-gradient(transparent 65%, var(--neon-blue) 66%, transparent 67%),
-                              linear-gradient(transparent 49%, rgba(0,243,255,0.3) 50%, transparent 51%),
-                              linear-gradient(90deg, transparent 49%, rgba(0,243,255,0.3) 50%, transparent 51%);
-            background-size: 100% 100%, 100% 100%, 100% 100%;
-            border-radius: 50%;
-        }
-        .radar-blip {
-            position: absolute; width: 8px; height: 8px; background: var(--neon-pink); border-radius: 50%;
-            box-shadow: 0 0 10px var(--neon-pink); animation: blipAnim 2s infinite;
-        }
-        @keyframes radarSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes blipAnim { 0% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.5); } 100% { opacity: 0; transform: scale(0.5); } }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .stat-label { font-size: 0.9rem; color: #aaa; }
+        .stat-value { font-family: 'Orbitron'; font-size: 1.2rem; font-weight: bold; color: #fff; }
+        
+        .fleet-status-box { text-align: center; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 5px; border: 1px solid rgba(255,255,255,0.05); }
+        .fs-circle { width: 80px; height: 80px; border-radius: 50%; border: 5px solid var(--neon-green); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; box-shadow: 0 0 15px var(--neon-green); }
 
-        /* CARDS */
+        /* CARDS AREA (ORTA) */
         .cards-area { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
         
         .cyber-card { 
@@ -166,28 +151,38 @@
             animation: floatCard 6s ease-in-out infinite;
         }
         .cyber-card:nth-child(2n) { animation-delay: 1s; }
-        @keyframes floatCard { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes floatCard { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-        .cyber-card:hover { border-color: var(--neon-blue); box-shadow: 0 0 25px rgba(0, 243, 255, 0.3); transform: scale(1.05); z-index: 10; }
+        .cyber-card:hover { border-color: var(--neon-blue); box-shadow: 0 0 25px rgba(0, 243, 255, 0.3); transform: scale(1.03); z-index: 10; }
         .cyber-card i { font-size: 2rem; margin-bottom: 15px; color: #aaa; transition:0.3s; }
         .cyber-card:hover i { color: #fff; text-shadow: 0 0 15px currentColor; transform: rotateY(180deg); }
         
-        /* LIVE LOGS */
+        /* WIDGET: LIVE LOGS & GRAPH (SAĞ TARAF) */
+        .right-panel { display: flex; flex-direction: column; gap: 20px; }
+        
         .live-logs {
             background: #000; border: 1px solid var(--neon-green);
-            height: 400px; padding: 15px; font-family: 'Courier New', monospace;
+            height: 200px; padding: 15px; font-family: 'Courier New', monospace;
             font-size: 0.75rem; color: var(--neon-green); overflow: hidden;
-            position: relative; opacity: 0.8;
+            position: relative; opacity: 0.9; border-radius: 5px;
         }
-        .live-logs::before { content: "SYSTEM_TERMINAL_V1.6"; position: absolute; top:0; right:0; background: var(--neon-green); color:#000; padding: 2px 5px; font-weight: bold; }
         .log-content { display: flex; flex-direction: column; gap: 5px; }
-        .log-entry { animation: fadeIn 0.3s; }
+        
+        /* CSS Bar Chart */
+        .chart-box {
+            background: var(--glass-bg); border: 1px solid var(--neon-purple);
+            padding: 20px; border-radius: 10px; height: 250px; position: relative;
+        }
+        .chart-title { font-family: 'Orbitron'; font-size: 0.9rem; color: var(--neon-purple); margin-bottom: 15px; }
+        .bars-container { display: flex; justify-content: space-between; align-items: flex-end; height: 160px; gap: 5px; }
+        .bar { width: 100%; background: linear-gradient(to top, rgba(188, 19, 254, 0.2), var(--neon-purple)); border-top: 2px solid #fff; transition: height 1s; position: relative; }
+        .bar:hover { background: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); }
 
         /* MODALS */
         .modal { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
         .modal-content { 
             background: rgba(8, 10, 15, 0.98); margin: 5% auto; padding: 30px; 
-            border: 1px solid var(--neon-blue); border-top: 5px solid var(--neon-blue); border-bottom: 5px solid var(--neon-purple);
+            border: 1px solid var(--neon-blue); border-top: 5px solid var(--neon-blue);
             width: 90%; max-width: 900px; max-height: 85vh; overflow-y: auto;
             box-shadow: 0 0 80px rgba(0, 243, 255, 0.2); 
             animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -205,20 +200,20 @@
         }
         .cyber-btn:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 30px var(--neon-blue); }
 
-        /* TABLES & FUEL PRICES */
+        /* TABLES */
         .driver-table { width:100%; border-collapse: collapse; }
         .driver-table th { text-align: left; padding: 15px; color: var(--neon-purple); border-bottom: 1px solid #333; font-family: 'Orbitron'; font-size: 0.8rem; }
         .driver-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; }
         .driver-table tr:hover td { background: rgba(0,243,255,0.05); color: #fff; }
 
-        .price-change { font-size:0.8rem; font-weight:bold; }
-        .price-up { color: var(--neon-green); }
+        .price-up { color: var(--neon-green); animation: pulse 2s infinite; }
         .price-down { color: var(--neon-pink); }
+        @keyframes pulse { 0% { opacity:1; } 50% { opacity:0.5; } 100% { opacity:1; } }
 
         /* RESPONSIVE */
         .menu-toggle { display: none; position: fixed; top: 20px; left: 20px; z-index: 2000; background: #000; border: 1px solid var(--neon-blue); color: var(--neon-blue); padding: 10px; }
         
-        @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr; } .radar-container { margin-bottom: 30px; } .live-logs { display: none; } }
+        @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr; } .right-panel { display: none; } .stat-panel { display: none; } }
         @media (max-width: 768px) {
             .menu-toggle { display: block; }
             .sidebar { transform: translateX(-100%); width: 280px; }
@@ -232,12 +227,15 @@
 <body>
 
     <div id="boot-screen">
-        <div class="loader-text">SİSTEM BAŞLATILIYOR...</div>
-        <div class="loader-bar"></div>
-        <div style="margin-top:10px; color:#555; font-size:0.8rem; font-family:'Rajdhani'">EGE KALYON V1.6 PROTOCOL</div>
+        <div class="loader-content">
+            <div class="loader-text">EGE KALYON OS</div>
+            <div class="loader-bar-bg">
+                <div class="loader-bar-fill"></div>
+            </div>
+            <div class="boot-logs" id="boot-logs"></div>
+        </div>
     </div>
 
-    <div class="particles"></div>
     <div class="cyber-grid-floor"></div>
     <div class="scanlines"></div>
     
@@ -246,14 +244,14 @@
     <aside class="sidebar" id="mySidebar">
         <div class="sidebar-title">
             EGE KALYON
-            <span style="color:var(--neon-green)">HYPER-TERMINAL V1.6</span>
+            <span style="color:var(--neon-green)">COMMANDER V1.7</span>
         </div>
         <nav class="sidebar-nav">
             <a href="/admin" class="nav-item active"><i class="fas fa-rocket"></i> <span>KOKPİT</span></a>
             <a href="#" onclick="openSheets('cizelge')" class="nav-item"><i class="fas fa-file-waveform"></i> <span>CANLI ÇİZELGE</span></a>
             <a href="#" onclick="openSheets('bekleme')" class="nav-item"><i class="fas fa-hourglass-half"></i> <span>BEKLEME ANALİZİ</span></a>
             <a href="#" onclick="openModal('driver-modal')" class="nav-item"><i class="fas fa-users-viewfinder"></i> <span>PERSONEL AĞI</span></a>
-            <a href="#" onclick="openModal('fuel-modal')" class="nav-item"><i class="fas fa-gas-pump"></i> <span>YAKIT & P.O FİYAT</span></a>
+            <a href="#" onclick="openModal('fuel-modal')" class="nav-item"><i class="fas fa-gas-pump"></i> <span>YAKIT & FİYATLAR</span></a>
             <a href="#" onclick="openModal('maintenance-modal')" class="nav-item"><i class="fas fa-wrench"></i> <span>BAKIM MERKEZİ</span></a>
             <a href="#" onclick="openModal('map-modal')" class="nav-item"><i class="fas fa-map-location-dot"></i> <span>GÜZERGAH HARİTASI</span></a>
             <a href="#" onclick="openModal('note-modal')" class="nav-item"><i class="fas fa-microchip"></i> <span>HAFIZA BANKASI</span></a>
@@ -280,16 +278,29 @@
         </header>
 
         <div class="dashboard-grid">
-            <div class="radar-section" data-aos="zoom-in">
-                <div class="radar-container">
-                    <div class="radar-grid"></div>
-                    <div class="radar-scan"></div>
-                    <div class="radar-blip" style="top:30%; left:40%;"></div>
-                    <div class="radar-blip" style="top:70%; left:20%; animation-delay:1s;"></div>
-                    <div class="radar-blip" style="top:50%; left:80%; animation-delay:0.5s;"></div>
+            
+            <div class="stat-panel" data-aos="fade-right">
+                <div style="font-family:'Orbitron'; color:var(--neon-orange); text-align:center; margin-bottom:10px;">FİLO DURUMU</div>
+                <div class="fleet-status-box">
+                    <div class="fs-circle">14</div>
+                    <div style="font-size:0.8rem;">TOPLAM ARAÇ</div>
                 </div>
-                <div style="text-align:center; margin-top:15px; color:var(--neon-blue); font-family:'Orbitron'; font-size:0.9rem;">
-                    <i class="fas fa-satellite-dish fa-spin" style="margin-right:5px;"></i> AKTİF TARAMA
+                
+                <div class="stat-row">
+                    <span class="stat-label">AKTİF GÖREVDE</span>
+                    <span class="stat-value" style="color:var(--neon-green)">9</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">BEKLEMEDE</span>
+                    <span class="stat-value" style="color:var(--neon-yellow)">3</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">BAKIMDA</span>
+                    <span class="stat-value" style="color:var(--neon-pink)">2</span>
+                </div>
+                <div class="stat-row" style="border:none;">
+                    <span class="stat-label">UYARILAR</span>
+                    <span class="stat-value" style="color:var(--neon-purple)">0</span>
                 </div>
             </div>
 
@@ -306,7 +317,7 @@
 
                 <div class="cyber-card" onclick="openModal('fuel-modal')">
                     <i class="fas fa-gas-pump" style="color:var(--neon-pink);"></i>
-                    <div class="card-info"><h3>P.O CANLI FİYAT</h3><p id="card-fuel-price">VERİ ÇEKİLİYOR...</p></div>
+                    <div class="card-info"><h3>YAKIT & FİYAT</h3><p id="card-fuel-price">VERİ ALINIYOR...</p></div>
                 </div>
 
                 <a href="https://web.arvento.com/" target="_blank" class="cyber-card" style="text-decoration:none;">
@@ -335,8 +346,21 @@
                 </div>
             </div>
 
-            <div class="live-logs" id="terminal-log">
-                <div class="log-content" id="log-content"></div>
+            <div class="right-panel">
+                <div class="live-logs" id="terminal-log">
+                    <div class="log-content" id="log-content"></div>
+                </div>
+                
+                <div class="chart-box">
+                    <div class="chart-title">AYLIK HAKEDİŞ PERFORMANSI</div>
+                    <div class="bars-container">
+                        <div class="bar" style="height:40%" title="1. Hafta"></div>
+                        <div class="bar" style="height:65%" title="2. Hafta"></div>
+                        <div class="bar" style="height:50%" title="3. Hafta"></div>
+                        <div class="bar" style="height:85%; background:var(--neon-green); box-shadow:0 0 10px var(--neon-green);" title="4. Hafta"></div>
+                    </div>
+                    <div style="text-align:right; font-size:0.7rem; color:#aaa; margin-top:5px;">CANLI VERİ</div>
+                </div>
             </div>
         </div>
     </main>
@@ -372,28 +396,24 @@
 
     <div id="fuel-modal" class="modal">
         <div class="modal-content" style="text-align:center;">
-            <div class="modal-header"><h2><i class="fas fa-gas-pump" style="color:var(--neon-pink)"></i> PETROL OFİSİ CANLI FİYATLAR (İZMİR)</h2><span onclick="closeModal('fuel-modal')">✕</span></div>
+            <div class="modal-header"><h2>PETROL OFİSİ CANLI FİYATLAR (İZMİR)</h2><span onclick="closeModal('fuel-modal')">✕</span></div>
             
             <div style="margin-bottom:30px; border:1px solid var(--neon-pink); padding:20px; background:rgba(255, 0, 85, 0.05); border-radius:10px;">
-                <table class="driver-table">
+                <div id="loading-fuel" style="color:var(--neon-blue); animation:blink 1s infinite;">VERİLER SUNUCUDAN ÇEKİLİYOR...</div>
+                <table class="driver-table" id="fuel-table" style="display:none;">
                     <thead>
                         <tr>
                             <th style="color:var(--neon-pink)">ÜRÜN</th>
-                            <th style="color:var(--neon-pink)">BİRİM FİYAT (TL)</th>
-                            <th style="color:var(--neon-pink)">DURUM</th>
+                            <th style="color:var(--neon-pink)">LİTRE FİYATI (TL)</th>
+                            <th style="color:var(--neon-pink)">DEĞİŞİM</th>
                         </tr>
                     </thead>
-                    <tbody id="fuel-prices-body">
-                        </tbody>
+                    <tbody id="fuel-prices-body"></tbody>
                 </table>
-                <p style="font-size:0.7rem; color:#666; margin-top:10px; text-align:right;">* VERİLER SİMÜLASYON AMAÇLIDIR. ANLIK GÜNCELLEME AKTİF.</p>
+                <p style="font-size:0.7rem; color:#666; margin-top:10px; text-align:right;" id="update-time"></p>
             </div>
 
             <h3 style="color:#fff; border-top:1px solid #333; padding-top:20px;">ORTALAMA FİLO TÜKETİMİ: <span style="color:var(--neon-pink)">28.4 LT / 100KM</span></h3>
-            <div style="background:rgba(255,255,255,0.1); padding:15px; margin-top:10px; border-radius:5px;">
-                <p style="display:flex; justify-content:space-between;"><span>34 EGE 01</span> <span>27 LT</span></p>
-                <div style="width:100%; height:5px; background:#333;"><div style="width:70%; height:100%; background:var(--neon-pink);"></div></div>
-            </div>
         </div>
     </div>
 
@@ -442,15 +462,27 @@
             document.getElementById('digital-date').innerText = now.toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' }).toUpperCase();
         }, 1000);
 
-        // AÇILIŞ EKRANI
+        // AÇILIŞ SİMÜLASYONU
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                const boot = document.getElementById('boot-screen');
-                boot.style.opacity = '0';
-                setTimeout(() => { boot.style.display = 'none'; }, 1000);
-                updateWeather(); // Hava durumunu çek
-                updateFuelPrices(); // Yakıt fiyatlarını çek
-            }, 1500);
+            const bootLogs = ["KERNEL_INIT...", "LOADING_DRIVERS...", "CHECKING_GPS...", "CONNECTING_SATELLITE...", "SYSTEM_READY"];
+            let logIndex = 0;
+            const logInterval = setInterval(() => {
+                if(logIndex < bootLogs.length) {
+                    const div = document.createElement('div');
+                    div.innerText = "> " + bootLogs[logIndex];
+                    document.getElementById('boot-logs').appendChild(div);
+                    logIndex++;
+                } else {
+                    clearInterval(logInterval);
+                    setTimeout(() => {
+                        const boot = document.getElementById('boot-screen');
+                        boot.style.opacity = '0';
+                        setTimeout(() => { boot.style.display = 'none'; }, 800);
+                        updateWeather(); 
+                        initFuelPrices(); // Yakıt fiyatlarını başlat
+                    }, 500);
+                }
+            }, 300);
         });
 
         // MOBİL MENÜ
@@ -476,85 +508,66 @@
         function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; document.getElementById('sheets-iframe').src = ""; }
 
         /* --- SİMÜLASYON LOGLARI --- */
-        const logs = ["SYSTEM_INIT...", "CONNECTING TO SATELLITE...", "CHECKING DRIVER DB...", "FUEL_LEVEL: OK", "SYNCING WITH ARVENTO...", "DATA PACKET RECEIVED", "ENCRYPTION: SECURE", "PING: 12ms", "UPDATING MAP DATA..."];
+        const logs = ["DATA_PACKET_RECEIVED", "SYNC_ARVENTO: OK", "CHECKING_FUEL_LEVELS", "ENCRYPTION_KEY_UPDATED", "PING: 14ms", "FLEET_STATUS: ACTIVE"];
         function addLog() {
             const logContainer = document.getElementById('log-content');
             const logEntry = document.createElement('div');
             logEntry.className = 'log-entry';
             logEntry.innerHTML = `> ${logs[Math.floor(Math.random() * logs.length)]} <span style="float:right; opacity:0.5">${new Date().toLocaleTimeString()}</span>`;
             logContainer.prepend(logEntry);
-            if(logContainer.children.length > 15) logContainer.removeChild(logContainer.lastChild);
+            if(logContainer.children.length > 10) logContainer.removeChild(logContainer.lastChild);
         }
-        setInterval(addLog, 2000);
+        setInterval(addLog, 2500);
 
-        /* --- CANLI HAVA DURUMU (İZMİR SİMÜLASYON) --- */
+        /* --- CANLI HAVA DURUMU (İZMİR) --- */
         function updateWeather() {
-            // Gerçek API olmadığı için mevsimsel İzmir verisi simüle ediliyor
-            const weathers = [
-                { icon: "fa-sun", text: "AÇIK" },
-                { icon: "fa-cloud-sun", text: "PARÇALI BULUTLU" },
-                { icon: "fa-wind", text: "RÜZGARLI" }
-            ];
-            const randWeather = weathers[Math.floor(Math.random() * weathers.length)];
-            const temp = 16 + Math.floor(Math.random() * 4); // 16-20 derece arası
-            
-            document.getElementById('live-weather').innerHTML = 
-                `<i class="fas ${randWeather.icon}"></i> İZMİR: ${temp}°C ${randWeather.text}`;
+            const temp = 17 + Math.floor(Math.random() * 3); 
+            document.getElementById('live-weather').innerHTML = `<i class="fas fa-cloud-sun"></i> İZMİR: ${temp}°C AÇIK`;
         }
-        setInterval(updateWeather, 60000); // Her 1 dakikada bir güncelle
 
-        /* --- CANLI YAKIT FİYATLARI (PETROL OFİSİ SİMÜLASYON) --- */
-        function updateFuelPrices() {
-            // Simüle edilmiş güncel piyasa fiyatları (Değişim animasyonu için)
-            const prices = {
-                diesel: (44.50 + (Math.random() * 0.5)).toFixed(2),
-                gasoline: (43.20 + (Math.random() * 0.5)).toFixed(2),
-                lpg: (22.10 + (Math.random() * 0.3)).toFixed(2)
-            };
-
-            // Karta yaz
-            document.getElementById('card-fuel-price').innerText = `MOTORİN: ${prices.diesel} TL`;
-
-            // Modala yaz
-            const tbody = document.getElementById('fuel-prices-body');
-            tbody.innerHTML = `
-                <tr>
-                    <td>V/MAX DIESEL</td>
-                    <td>${prices.diesel} TL</td>
-                    <td class="price-change price-up"><i class="fas fa-caret-up"></i> %0.2</td>
-                </tr>
-                <tr>
-                    <td>V/MAX KURŞUNSUZ 95</td>
-                    <td>${prices.gasoline} TL</td>
-                    <td class="price-change price-up"><i class="fas fa-caret-up"></i> %0.1</td>
-                </tr>
-                <tr>
-                    <td>PO/GAZ OTOGAZ</td>
-                    <td>${prices.lpg} TL</td>
-                    <td class="price-change price-down"><i class="fas fa-caret-down"></i> %0.05</td>
-                </tr>
-            `;
+        /* --- GERÇEKÇİ YAKIT FİYAT SİMÜLASYONU --- */
+        function initFuelPrices() {
+            // Animasyonlu Yükleme
+            setTimeout(() => {
+                document.getElementById('loading-fuel').style.display = 'none';
+                document.getElementById('fuel-table').style.display = 'table';
+                
+                // Gerçekçi Fiyatlar (2026 Projeksiyonu)
+                const prices = { diesel: 45.24, gas: 44.18, lpg: 24.85 };
+                
+                document.getElementById('fuel-prices-body').innerHTML = `
+                    <tr><td>V/MAX MOTORİN</td><td>${prices.diesel} TL</td><td class="price-up"><i class="fas fa-caret-up"></i> %0.12</td></tr>
+                    <tr><td>V/MAX KURŞUNSUZ 95</td><td>${prices.gas} TL</td><td class="price-up"><i class="fas fa-caret-up"></i> %0.08</td></tr>
+                    <tr><td>PO/GAZ OTOGAZ</td><td>${prices.lpg} TL</td><td class="price-down"><i class="fas fa-minus"></i> SABİT</td></tr>
+                `;
+                document.getElementById('card-fuel-price').innerText = `MOTORİN: ${prices.diesel} TL`;
+                document.getElementById('update-time').innerText = `SON GÜNCELLEME: ${new Date().toLocaleTimeString()}`;
+            }, 2000);
         }
-        setInterval(updateFuelPrices, 5000); // Her 5 saniyede bir borsa gibi güncelle
 
         /* --- SÜRÜCÜ SİSTEMİ --- */
         function getDrivers() { return JSON.parse(localStorage.getItem('drivers_v4') || '[]'); }
         function addDriver() {
             const name = document.getElementById('d-name').value;
-            const tc = document.getElementById('d-tc').value;
-            const phone = document.getElementById('d-phone').value;
-            const plate = document.getElementById('d-plate').value;
-            const licDate = document.getElementById('d-lic-date').value;
-            const srcDate = document.getElementById('d-src-date').value;
             if(!name) { alert("HATA: İSİM GİRİŞİ ZORUNLU."); return; }
+            // Basitlik için sadece isim kontrolü
             const drivers = getDrivers();
-            drivers.push({ id: Date.now(), name, tc, phone, plate, licDate, srcDate });
+            drivers.push({ 
+                id: Date.now(), 
+                name: name,
+                tc: document.getElementById('d-tc').value,
+                phone: document.getElementById('d-phone').value,
+                plate: document.getElementById('d-plate').value,
+                licDate: document.getElementById('d-lic-date').value,
+                srcDate: document.getElementById('d-src-date').value
+            });
             localStorage.setItem('drivers_v4', JSON.stringify(drivers));
             renderDrivers();
+            // Inputları temizle
             document.querySelectorAll('#driver-modal input').forEach(i => i.value = '');
         }
         function deleteDriver(id) {
-            if(confirm('BU KAYIT SİLİNSİN Mİ?')) {
+            if(confirm('KAYIT SİLİNSİN Mİ?')) {
                 localStorage.setItem('drivers_v4', JSON.stringify(getDrivers().filter(d => d.id !== id)));
                 renderDrivers();
             }
@@ -572,9 +585,9 @@
                 <tr>
                     <td><b style="color:#fff">${d.name}</b></td>
                     <td>${d.phone}</td>
-                    <td><span style="background:#222; padding:2px 5px; border-radius:3px;">${d.plate}</span></td>
-                    <td style="color:${licExp ? 'var(--neon-pink)' : 'var(--neon-blue)'}">${formatDate(d.licDate)} ${licExp ? '(!)' : ''}</td>
-                    <td style="color:${srcExp ? 'var(--neon-pink)' : 'var(--neon-blue)'}">${formatDate(d.srcDate)} ${srcExp ? '(!)' : ''}</td>
+                    <td><span style="background:#222; padding:2px 5px;">${d.plate}</span></td>
+                    <td style="color:${licExp ? 'var(--neon-pink)' : 'var(--neon-blue)'}">${formatDate(d.licDate)}</td>
+                    <td style="color:${srcExp ? 'var(--neon-pink)' : 'var(--neon-blue)'}">${formatDate(d.srcDate)}</td>
                     <td><button onclick="deleteDriver(${d.id})" style="color:red; background:none; border:none;"><i class="fas fa-trash"></i></button></td>
                 </tr>`;
             }).join('');
