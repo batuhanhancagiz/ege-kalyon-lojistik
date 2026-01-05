@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <title>Ege Kalyon | Terminal V3.3</title>
+    <title>Ege Kalyon | Terminal V3.4</title>
     <style>
         :root { 
             --accent: #29dec8; --warning: #f59e0b; --danger: #ff4d4d; 
@@ -35,6 +34,19 @@
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); overflow-y: auto; }
         .modal-content { background: #0a0a0a; margin: 2% auto; padding: 35px; border: 1px solid var(--border); width: 95%; max-width: 800px; border-radius: 35px; box-shadow: 0 0 100px rgba(0,0,0,0.8); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+
+        /* INPUT STİLLERİ */
+        .cyber-input {
+            background: #000; 
+            border: 1px solid #333; 
+            color: #fff; 
+            padding: 12px; 
+            border-radius: 10px; 
+            width: 100%;
+            outline: none;
+            transition: 0.3s;
+        }
+        .cyber-input:focus { border-color: var(--accent); }
 
         /* AKILLI NOTLAR GÜNCEL TASARIM V3.3 */
         .note-input-group { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -69,6 +81,13 @@
         .info-list { list-style: none; }
         .info-list li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #111; font-size: 0.9rem; }
 
+        /* TABLE STYLES FOR DRIVERS */
+        .driver-table { width:100%; border-collapse:collapse; margin-top: 20px; }
+        .driver-table th { text-align: left; padding: 10px; color: var(--accent); border-bottom: 1px solid #333; font-size: 0.85rem; }
+        .driver-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; vertical-align: middle; }
+        .expired-warning { color: var(--danger) !important; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
         @media (max-width: 1024px) {
             .sidebar { width: 80px; }
             .sidebar-title, .sidebar-nav a span { display: none; }
@@ -94,7 +113,7 @@
             <header class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
                 <div data-aos="fade-right">
                     <h1 style="font-size: 1.8rem;">Terminal <span class="highlight" style="color:var(--accent)">Otoritesi</span></h1>
-                    <p style="color: #555; margin-top: 5px;">Sistem Kararlı Modda. Merhaba, <%= firma %></p>
+                    <p style="color: #555; margin-top: 5px;">Sistem Kararlı Modda. Merhaba, Ege Kalyon</p>
                 </div>
                 <div style="text-align: right;" data-aos="fade-left">
                     <div id="digital-clock">00:00:00</div>
@@ -149,7 +168,7 @@
         <footer class="admin-footer">
             <div class="footer-top">
                 <span>Ege Kalyon Lojistik</span>
-                <span>Terminal V3.3</span>
+                <span>Terminal V3.4</span>
                 <span>2026</span>
             </div>
             <div class="footer-signature">
@@ -170,14 +189,43 @@
     </div>
 
     <div id="driver-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2><i class="fas fa-users-gear"></i> ŞOFÖR YÖNETİMİ</h2><span onclick="closeModal('driver-modal')" style="cursor:pointer">✕</span></div>
-            <div style="background:var(--glass); padding:20px; border-radius:20px; margin-bottom:20px;">
-                <input type="text" id="d-name" placeholder="Ad Soyad" style="background:#000; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:30%; margin-right:10px;">
-                <input type="text" id="d-plate" placeholder="Plaka" style="background:#000; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:30%; margin-right:10px;">
-                <button onclick="addDriver()" style="background:var(--accent); color:#000; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">KAYDET</button>
+        <div class="modal-content" style="max-width: 900px;"> <div class="modal-header"><h2><i class="fas fa-users-gear"></i> ŞOFÖR YÖNETİMİ</h2><span onclick="closeModal('driver-modal')" style="cursor:pointer">✕</span></div>
+            
+            <div style="background:var(--glass); padding:25px; border-radius:20px; margin-bottom:20px; border:1px solid var(--border);">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px;">
+                    <input type="text" id="d-name" placeholder="Ad Soyad" class="cyber-input">
+                    <input type="text" id="d-tc" placeholder="TC Kimlik No" class="cyber-input" maxlength="11">
+                    <input type="text" id="d-phone" placeholder="Telefon (5XX...)" class="cyber-input">
+                    <input type="text" id="d-plate" placeholder="Plaka" class="cyber-input">
+                    
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 0.75rem; color: #888; margin-bottom: 5px; margin-left: 5px;">Ehliyet Son Kul.</span>
+                        <input type="date" id="d-lic-date" class="cyber-input">
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 0.75rem; color: #888; margin-bottom: 5px; margin-left: 5px;">SRC Son Kul.</span>
+                        <input type="date" id="d-src-date" class="cyber-input">
+                    </div>
+                </div>
+                <button onclick="addDriver()" style="background:var(--accent); color:#000; border:none; padding:12px 30px; border-radius:10px; font-weight:bold; cursor:pointer; width: 100%; transition:0.3s;">PERSONELİ KAYDET</button>
             </div>
-            <table style="width:100%; border-collapse:collapse;"><tbody id="driver-tbody"></tbody></table>
+
+            <div style="overflow-x: auto;">
+                <table class="driver-table">
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>İletişim / TC</th>
+                            <th>Plaka</th>
+                            <th>Ehliyet Durumu</th>
+                            <th>SRC Durumu</th>
+                            <th style="text-align: right;">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="driver-tbody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -210,7 +258,7 @@
         }
         function closeSheets() { document.getElementById('sheets-overlay').style.display = 'none'; document.getElementById('sheets-iframe').src = ""; }
 
-        /* AKILLI NOT SİSTEMİ V3.3 - TARİH VE ÖZEL DÜZENLEME BUTONU */
+        /* AKILLI NOT SİSTEMİ V3.3 */
         let editNoteId = null;
 
         function getNotes() { return JSON.parse(localStorage.getItem('terminal_notes_v3') || '[]'); }
@@ -277,31 +325,101 @@
             `).join('');
         }
 
-        /* ŞOFÖR SİSTEMİ */
-        function getDrivers() { return JSON.parse(localStorage.getItem('drivers_v3') || '[]'); }
+        /* ŞOFÖR SİSTEMİ GÜNCEL V3.4 */
+        function getDrivers() { return JSON.parse(localStorage.getItem('drivers_v4') || '[]'); } // Veri tabanını v4 olarak güncelledik temiz kurulum için
+        
         function addDriver() {
             const name = document.getElementById('d-name').value;
+            const tc = document.getElementById('d-tc').value;
+            const phone = document.getElementById('d-phone').value;
             const plate = document.getElementById('d-plate').value;
-            if(!name || !plate) return;
+            const licDate = document.getElementById('d-lic-date').value;
+            const srcDate = document.getElementById('d-src-date').value;
+
+            if(!name) { alert("Lütfen en azından isim giriniz."); return; }
+
             const drivers = getDrivers();
-            drivers.push({ id: Date.now(), name, plate });
-            localStorage.setItem('drivers_v3', JSON.stringify(drivers));
+            drivers.push({ 
+                id: Date.now(), 
+                name, 
+                tc, 
+                phone, 
+                plate,
+                licDate,
+                srcDate
+            });
+            localStorage.setItem('drivers_v4', JSON.stringify(drivers));
+            
+            // Formu temizle
+            document.getElementById('d-name').value = "";
+            document.getElementById('d-tc').value = "";
+            document.getElementById('d-phone').value = "";
+            document.getElementById('d-plate').value = "";
+            document.getElementById('d-lic-date').value = "";
+            document.getElementById('d-src-date').value = "";
+
             renderDrivers();
         }
+
         function deleteDriver(id) {
-            const drivers = getDrivers().filter(d => d.id !== id);
-            localStorage.setItem('drivers_v3', JSON.stringify(drivers));
-            renderDrivers();
+            if(confirm('Bu şoförü silmek istediğinize emin misiniz?')) {
+                const drivers = getDrivers().filter(d => d.id !== id);
+                localStorage.setItem('drivers_v4', JSON.stringify(drivers));
+                renderDrivers();
+            }
         }
+
+        // Tarih kontrol fonksiyonu
+        function isExpired(dateString) {
+            if (!dateString) return false;
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const targetDate = new Date(dateString);
+            return targetDate < today;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return "-";
+            const date = new Date(dateString);
+            return date.toLocaleDateString('tr-TR');
+        }
+
         function renderDrivers() {
             const tbody = document.getElementById('driver-tbody');
-            tbody.innerHTML = getDrivers().map(d => `
-                <tr style="border-bottom:1px solid #111">
-                    <td style="padding:15px"><b>${d.name}</b></td>
-                    <td style="padding:15px">${d.plate}</td>
-                    <td style="text-align:right"><button onclick="deleteDriver(${d.id})" style="color:var(--danger); border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+            const drivers = getDrivers();
+            
+            if (drivers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#555; padding:20px;">Kayıtlı personel bulunamadı.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = drivers.map(d => {
+                const licExpired = isExpired(d.licDate);
+                const srcExpired = isExpired(d.srcDate);
+
+                // Ehliyet Hücresi
+                let licHtml = `<span>${formatDate(d.licDate)}</span>`;
+                if(licExpired) licHtml = `<span class="expired-warning"><i class="fas fa-triangle-exclamation"></i> SÜRESİ DOLDU (${formatDate(d.licDate)})</span>`;
+
+                // SRC Hücresi
+                let srcHtml = `<span>${formatDate(d.srcDate)}</span>`;
+                if(srcExpired) srcHtml = `<span class="expired-warning"><i class="fas fa-triangle-exclamation"></i> SÜRESİ DOLDU (${formatDate(d.srcDate)})</span>`;
+                
+                return `
+                <tr style="background:${(licExpired || srcExpired) ? 'rgba(255, 77, 77, 0.1)' : 'transparent'};">
+                    <td><b>${d.name}</b></td>
+                    <td>
+                        <div style="font-size:0.8rem; color:#888;">TC: ${d.tc || '-'}</div>
+                        <div style="font-size:0.8rem; color:var(--accent);">${d.phone || '-'}</div>
+                    </td>
+                    <td><span style="background:#fff; color:#000; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:0.8rem;">${d.plate || '-'}</span></td>
+                    <td>${licHtml}</td>
+                    <td>${srcHtml}</td>
+                    <td style="text-align:right">
+                        <button onclick="deleteDriver(${d.id})" style="color:var(--danger); border:none; background:none; cursor:pointer; font-size:1.1rem;"><i class="fas fa-trash"></i></button>
+                    </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
     </script>
 </body>
